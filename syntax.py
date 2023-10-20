@@ -96,7 +96,7 @@ class SyntaxPhase:
                 "if",
 
                 "return",
-                
+                "try",
                 "DT",
                 "void",
                 "ID",
@@ -139,10 +139,16 @@ class SyntaxPhase:
                 self.index += 1
                 if self.SST1():
                     return True
+
+            elif self.tokens[self.index][0] == "try":
+                if self.try_catch():
+                    return True        
             
             if self.tokens[self.index][0] == "class":
                 if self.class_body():
-                    return True          
+                    return True
+
+
         return False
 
     def obj2(self):
@@ -275,7 +281,7 @@ class SyntaxPhase:
                 if self.tokens[self.index][0] =='{':
                     self.index += 1
                 
-                    if self.class_body1 ():
+                    if self.class_body ():
                         return True
                         
                     if self.tokens[self.index][0] =='}':
@@ -310,19 +316,19 @@ class SyntaxPhase:
                 self.index += 1
             return True
         return False
-    def class_body1(self):
+    def class_body(self):
         
         if self.dec():
-            if self.class_body1():
+            if self.class_body():
                    return True
         elif self.access_modifier():
             if self.dec():
                 if self.class_modifier():
-                    if self.class_body1():
+                    if self.class_body():
                         return True            
             
         elif self.SST():
-            if self.class_body1():
+            if self.class_body():
                    return True              
 
 
@@ -764,36 +770,7 @@ class SyntaxPhase:
                 return True
         return False
 
-    # def F(self):
-    #     if (
-    #          self.tokens[self.index][1] == "this" or self.tokens[self.index][1] == "super"
-    #         or self.tokens[self.index][0] == "ID" or self.tokens[self.index][0] == "INTEGER"
-    #         or self.tokens[self.index][0] == "FLOAT" or self.tokens[self.index][0] == "STRING"
-    #         or self.tokens[self.index][0] == "BOOLEAN" or self.tokens[self.index][0] == "CHARACTER"
-    #         or self.tokens[self.index][0] == "(" or self.tokens[self.index][1] == "!"
-    #     ):
-    #         if self.ts3():
-    #             if self.tokens[self.index][0] == "ID":
-    #                 self.index += 1
-    #                 if self.O():
-    #                     return True
-    #         elif self.constant():
-    #             return True
-    #         elif self.tokens[self.index][1] == "(":
-    #             self.index += 1
-    #             if self.OE():
-    #                 if self.tokens[self.index][1] == ")":
-    #                     return True
-    #         elif self.tokens[self.index][1] == "!":
-    #             self.index += 1
-    #             if self.tokens[self.index][1] == "(":
-    #                 self.index += 1
-    #                 if self.F():
-    #                     if self.tokens[self.index][1] == ")":
-    #                         self.index += 1
-    #                         return True
-    #     return False
-
+    
     def R(self):
         if (
             self.tokens[self.index][1] == "("
@@ -1065,12 +1042,56 @@ class SyntaxPhase:
                     self.index += 1
                     if self.val2():
                         return True
-        elif self.tokens[self.index][1] == "}":
+        elif self.tokens[self.index][1] == "}":  
             return True
         return False
- 
+    
 
-   
+    def try_catch(self):
+        if self.tokens[self.index][0] == "try":
+            self.index += 1
+            if self.body_T():
+                if self.except_rule():
+                    if self.finally_rule():
+                        return True
+        return False
+
+    def body_T(self):
+        if self.body():
+            if self.Try2():
+                return True
+        return False
+
+    def Try2(self):
+        if self.tokens[self.index][0] == "try":
+            if self.try_catch():
+                return True
+        return False
+
+    def except_rule(self):
+        if self.tokens[self.index][0] == "except":
+            self.index += 1
+        
+            if self.body():
+                if self.ex():
+                    return True
+        return False
+
+    def ex(self):
+        if self.tokens[self.index][0] == "except":
+            if self.except_rule():
+                return True
+            return True
+        return False
+
+    def finally_rule(self):
+        if self.tokens[self.index][0] == "finally":
+            self.index += 1
+        
+            if self.body():
+                return True
+        return False
+
 
     def S(self):
         while self.tokens[self.index][0] != "$":
