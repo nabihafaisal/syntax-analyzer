@@ -1,4 +1,4 @@
-float b=1.0;
+float[][][] b;
 
 int v,m=a*7/8;
 
@@ -11,18 +11,6 @@ if(a==1 or a>3){
 
     }
 
-}
-class a{
-    public:
-    int a;
-
-    void fn(){
-        for A in range(3):{
-    this.a=c;
-for A in range(a-b*a<b):{
-    this.a=c;
-
-    }
 }
 for A in range(3):{
     this.a=c;

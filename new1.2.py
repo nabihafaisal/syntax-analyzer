@@ -1365,12 +1365,23 @@ class SyntaxPhase:
             self.index += 1
             if self.tokens[self.index][1] == "]":
                 self.index += 1
-                if self.br():
-                    return True
+                # if self.ar():
+                return True
         elif self.tokens[self.index][0] in ["hidden", "ID"]:
             return True
         return False
 
+    def ar(self):
+        if(self.tokens[self.index][0]=="ID"):
+            return True
+        if self.tokens[self.index][1] == "[":
+            self.index += 1
+            if self.tokens[self.index][1] == "]":
+                self.index += 1
+                if(self.tokens[self.index][1] == "["):
+                    return False
+                return True
+        return False
 
     def Arraydef(self):
         if self.tokens[self.index][1] == "=":
@@ -1470,7 +1481,7 @@ if __name__ == '__main__':
     # Define the regular expressions for tokens
     Tokenizer.define_tokens()
 
-    file_path = "D:/6 semester/compiler construction/assignment/khadija/LA+Syntax 2/LA+Syntax/input.txt" # Replace with the actual absolute path to the file
+    file_path = "./input.txt" # Replace with the actual absolute path to the file
     if os.path.exists(file_path):
         with open(file_path) as file_handler:
             t = Tokenizer(file_handler)
