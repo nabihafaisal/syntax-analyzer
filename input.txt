@@ -1,4 +1,7 @@
-float[][][] b;
+float[][] b;
+abstract class A:B {
+
+}
 
 int v,m=a*7/8;
 

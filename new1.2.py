@@ -1,7 +1,9 @@
 import re
 
+
 class LexicalError(Exception):
     pass
+
 
 class Tokenizer:
     @staticmethod
@@ -25,16 +27,15 @@ class Tokenizer:
         Tokenizer.escapeCodesForString = {"'": "__x20__", '"': "__x21__"}
 
         # Define Python keywords, operators, and delimiters
-        Tokenizer.keywords = [ 'if', 'else', 'for', 'in','range', 'while', 'bool','constant',
-         'enum' ]
-        Tokenizer.datatypes=['int','float','char','string','bool']
-      
+        Tokenizer.keywords = ['if', 'else', 'for', 'in', 'range', 'while', 'bool', 'constant',
+                              'enum']
+        Tokenizer.datatypes = ['int', 'float', 'char', 'string', 'bool']
 
         Tokenizer.openbrackets = ['(',  '{',  '[']
         Tokenizer.closebrackets = [')',  '}', ']']
-     
+
         Tokenizer.OOP = ['class', 'private', 'public', 'protected', 'void', 'extends',
-       'virtual','override', 'import', 'new', 'return', 'sealed', 'abstract','permits', 'this','super' ,'const','static']
+                         'virtual', 'override', 'import', 'new', 'return', 'sealed', 'abstract', 'permits', 'this', 'super', 'const', 'static']
         Tokenizer.punctuators = [',', ';', ':', '.']
         Tokenizer.PM = ['+', '-']
         Tokenizer.MDM = ['*', '/', '%']
@@ -42,21 +43,21 @@ class Tokenizer:
         Tokenizer.assignment = ['=']
         Tokenizer.relational_operators = ['<', '>', '<=', '>=', '!=', '==']
         Tokenizer.assignment_operators = ['+=', '-=', '==', '*=', '%=']
-    
+
         Tokenizer.boolean_constants = ['True', 'False']
         Tokenizer.inc_dec = ['--', '++']
 
         # Define regular expressions for different tokens
-        Tokenizer.identifier = Tokenizer.new_token_regex(f'({letter}|_)({letter}|{digit}|_)*')
-        Tokenizer.integer = Tokenizer.new_token_regex(f'{non_zero_digit}{digit}*|0')
-        Tokenizer.float = Tokenizer.new_token_regex(f'({digit}+|(?={dot}{digit})){dot}({digit}+|(?<={digit}{dot}))')
+        Tokenizer.ID = Tokenizer.new_token_regex(
+            f'({letter}|_)({letter}|{digit}|_)*')
+        Tokenizer.integer = Tokenizer.new_token_regex(
+            f'{non_zero_digit}{digit}*|0')
+        Tokenizer.float = Tokenizer.new_token_regex(
+            f'({digit}+|(?={dot}{digit})){dot}({digit}+|(?<={digit}{dot}))')
         Tokenizer.string = Tokenizer.new_token_regex(f'{str_single_quotes}|{str_double_quotes}|'
                                                      f'{str_three_single_quotes}|{str_three_double_quotes}')
-        Tokenizer.comment = Tokenizer.new_token_regex(f'(#[^\n]*)|(/\*([^*]|\*(?!/)|[\n])*(/\*+|//)?|/\*\*/)')
-       
-
-
-
+        Tokenizer.comment = Tokenizer.new_token_regex(
+            f'(#[^\n]*)|(/\*([^*]|\*(?!/)|[\n])*(/\*+|//)?|/\*\*/)')
 
     def __init__(self, file_handler):
         self.file_handler = file_handler
@@ -74,7 +75,7 @@ class Tokenizer:
             self.col_num = 1
         else:
             self.col_num += 1
-    
+
     def get_prev_character(self):
         # Get the next character without advancing the file pointer
         curr_offset = self.file_handler.tell()
@@ -98,8 +99,7 @@ class Tokenizer:
         self.start_col_num = self.col_num
         token = ''
         token_name = ''
-    
-        
+
         while True:
             ch = self.get_next_character()
             self.token_buffer += ch
@@ -109,8 +109,7 @@ class Tokenizer:
                 if token_name == 'INCOMPLETE STRING':
                     raise LexicalError('Incomplete string reached EOF')
                 return token, token_name
-         
-            
+
             if self.token_buffer in Tokenizer.OOP:
                 token = self.token_buffer
                 token_name = self.token_buffer
@@ -142,9 +141,7 @@ class Tokenizer:
                 self.increment_pointer()
                 continue
 
-            
-
-            if re.search(Tokenizer.identifier, self.token_buffer):
+            if re.search(Tokenizer.ID, self.token_buffer):
                 token = self.token_buffer
                 token_name = 'ID'
                 self.increment_pointer()
@@ -179,11 +176,11 @@ class Tokenizer:
                         token_name = 'CHARACTER'
                         self.increment_pointer()
                     else:
-                         token = self.token_buffer
-                         token_name = 'Invalid Lexeme'
-                         self.increment_pointer()
-             
-                if len(self.token_buffer) >=2 and self.token_buffer.startswith("'") and self.token_buffer.endswith("'"):
+                        token = self.token_buffer
+                        token_name = 'Invalid Lexeme'
+                        self.increment_pointer()
+
+                if len(self.token_buffer) >= 2 and self.token_buffer.startswith("'") and self.token_buffer.endswith("'"):
                     if len(self.token_buffer) == 4:
                         if self.token_buffer[1] == '\\' and self.token_buffer[2] == 'n':
                             token = self.token_buffer
@@ -194,22 +191,19 @@ class Tokenizer:
                         else:
                             token = self.token_buffer
                             token_name = 'Invalid Lexeme'
-                    elif len(self.token_buffer) == 3 :
+                    elif len(self.token_buffer) == 3:
                         token = self.token_buffer
                         token_name = 'CHARACTER'
                         self.increment_pointer()
-                    
+
                     else:
                         token = self.token_buffer
                         token_name = 'Invalid Lexeme'
                     self.increment_pointer()
-                elif():
+                elif ():
                     token = self.token_buffer
                     token_name = 'Invalid Lexeme'
                     self.increment_pointer()
-
-
-
 
                 elif len(self.token_buffer) >= 2 and self.token_buffer.startswith('"') and self.token_buffer.endswith('"'):
                     escaped = False
@@ -238,7 +232,6 @@ class Tokenizer:
 
                     if not escaped:
                         # If the last character was not part of an escape sequence, the string is complete
-                        # Print the string content without the backslash if it's just before the closing quotes
                         keys = list(Tokenizer.escapeCodesForString.keys())
                         values = list(Tokenizer.escapeCodesForString.values())
                         for i in range(len(values)):
@@ -263,8 +256,6 @@ class Tokenizer:
                     token_name = 'INVALID  LEXEME'
                     self.increment_pointer()
                     continue
-
-
 
             if re.search(Tokenizer.comment, self.token_buffer) or (self.token_buffer.startswith('/*') and self.token_buffer.endswith('*/')):
                 token = self.token_buffer
@@ -308,14 +299,11 @@ class Tokenizer:
                 self.increment_pointer()
                 continue
 
-
-
             if self.token_buffer in Tokenizer.relational_operators:
                 token = self.token_buffer
                 token_name = 'ROP'
                 self.increment_pointer()
                 continue
-
 
             if self.token_buffer in Tokenizer.assignment_operators:
                 token = self.token_buffer
@@ -357,6 +345,7 @@ class Tokenizer:
             # If there is no lexical error, return the token formed so far without consuming the current character
             self.token_buffer = ''
             return token, token_name
+
     def tokenize_input(self):
         # Tokenize the input
         tokens = []
@@ -369,18 +358,20 @@ class Tokenizer:
 
                 if not ch:
                     # Add the end-of-input token
-                    tokens.append(("$", "$" ,t.start_line_num+1))
+                    tokens.append(("$", "$", t.start_line_num+1))
                     return tokens
 
                 token, token_name = t.get_next_token()
-            
-                tokens.append((token_name, token,t.start_line_num))
-                
+
+                tokens.append((token_name, token, t.start_line_num))
+
             except LexicalError as e:
-                print(f'Lexical error: {e} - Line: {t.start_line_num} - Column: {t.start_col_num}')
+                print(
+                    f'Lexical error: {e} - Line: {t.start_line_num} - Column: {t.start_col_num}')
                 t.token_buffer = ''
-             
+
 # ... (your Tokenizer class and main code)
+
 
 class SyntaxPhase:
     def __init__(self, tokens):
@@ -391,14 +382,16 @@ class SyntaxPhase:
         if self.S():
             if self.tokens[self.index][0] == "$":
                 print("No Syntax Error  :)")
-                
-            else:
-                print(f"  :(   Syntax Error At Line No.: {self.tokens[self.index][2]} {self.tokens[self.index][0]}")
-        else:
-            print(f"  :(   Syntax Error At Line No.: {self.tokens[self.index][2]} {self.tokens[self.index][0]}")
 
-   
-    #DECLARATION
+            else:
+                print(
+                    f"  :(   Syntax Error At Line No.: {self.tokens[self.index][2]} {self.tokens[self.index][0]}")
+        else:
+            print(
+                f"  :(   Syntax Error At Line No.: {self.tokens[self.index][2]} {self.tokens[self.index][0]}")
+
+    # DECLARATION
+
     def dec(self):
         if (
             self.tokens[self.index][0] == "DT"
@@ -423,7 +416,7 @@ class SyntaxPhase:
             self.index += 1
             if self.OE():
                 return True
-          
+
         elif self.tokens[self.index][1] in [";", ","]:
             return True
         return False
@@ -431,7 +424,7 @@ class SyntaxPhase:
     def fs(self):
         if self.tokens[self.index][0] == "static":
             self.index += 1
-       
+
         elif self.tokens[self.index][0] == "DT":
             self.index += 1
         return False
@@ -448,7 +441,8 @@ class SyntaxPhase:
             if self.dec2():
                 return True
         return False
-     #BODY
+     # BODY
+
     def body(self):
         if self.tokens[self.index][1] == "{":
             self.index += 1
@@ -457,13 +451,14 @@ class SyntaxPhase:
                     self.index += 1
                     return True
         return False
+
     def MST(self):
         if (
-            self.tokens[self.index][0] in ["if", "while", "else", "for","this","super","ID","return","DT"]
-        
+            self.tokens[self.index][0] in ["if", "while", "else",
+                                           "for", "this", "super", "ID", "return", "DT"]
+
         ):
             if self.SST():
-                # print("token", self.tokens[self.index][1])
                 return True
             if self.MST():
                 return True
@@ -478,34 +473,33 @@ class SyntaxPhase:
                 "while",
                 "class",
                 "if",
-
+                "sealed",
+                "abstract",
                 "return",
-                
+
                 "DT",
                 "void",
                 "ID",
                 "this",
                 "super"
             ]
-          
+
         ):
             if self.tokens[self.index][0] == "if":
                 if self.if_else():
                     return True
 
-                 
             elif self.tokens[self.index][0] == "while":
                 if self.while_state():
                     return True
-            
-                       
+
             elif self.tokens[self.index][0] == "for":
                 if self.for_loop():
                     return True
             elif self.tokens[self.index][0] == "return":
                 if self.return_state():
                     return True
-          
+
             elif self.tokens[self.index][0] in ["this", "super"]:
                 if self.ts():
                     return True
@@ -513,20 +507,20 @@ class SyntaxPhase:
                 self.index += 1
                 if self.SST2():
                     return True
-            
+
             elif self.tokens[self.index][0] == "void" and self.tokens[self.index+1][0] == "ID":
                 self.index += 2
                 if self.Function():
                     return True
-                        
+
             elif self.tokens[self.index][0] == "ID":
                 self.index += 1
                 if self.SST1():
                     return True
-            
-            if self.tokens[self.index][0] == "class":
-                if self.class_body():
-                    return True          
+
+            if self.tokens[self.index][0] in ["class", "sealed", "abstract"]:
+                if self._Class():
+                    return True
         return False
 
     def obj2(self):
@@ -551,7 +545,7 @@ class SyntaxPhase:
             self.tokens[self.index][0] == "ID"
             or self.tokens[self.index][1] == "("
             or self.tokens[self.index][1] == "["
-           
+
             or self.tokens[self.index][1] == "."
             or self.tokens[self.index][1] == "="
         ):
@@ -574,8 +568,7 @@ class SyntaxPhase:
             if self.dec2():
                 return True
             elif self.Function():
-                return True    
-            
+                return True
 
         elif self.tokens[self.index][1] == "[":
             self.index += 1
@@ -589,7 +582,8 @@ class SyntaxPhase:
                                 self.index += 1
                                 return True
         return False
-     #FOR-LOOP
+     # FOR-LOOP
+
     def for_loop(self):
         if self.tokens[self.index][0] == "for":
             self.index += 1
@@ -609,6 +603,7 @@ class SyntaxPhase:
                                         if self.body():
                                             return True
         return False
+
     def while_state(self):
         if self.tokens[self.index][0] == "while":
             self.index += 1
@@ -624,6 +619,7 @@ class SyntaxPhase:
 
         return False
     # IF-ELSE
+
     def if_else(self):
         if self.tokens[self.index][0] == "if":
             self.index += 1
@@ -636,6 +632,7 @@ class SyntaxPhase:
                             if self.else_state():
                                 return True
         return False
+
     def else_state(self):
         if self.tokens[self.index][0] == "else":
             self.index += 1
@@ -644,28 +641,29 @@ class SyntaxPhase:
         elif (
             self.tokens[self.index][0] in [
                 "this", "super", "ID", "DT", "if", "while",
-                 "for", "return",
+                "for", "return",
                 "}"
             ]
         ):
             return True
         return False
-    #------------------------------------ class body------------------------------------------
+    # ------------------------------------ class body------------------------------------------
+
     def class_body(self):
-        if self.tokens[self.index][0] =='class':
+        if self.tokens[self.index][0] == 'class':
             self.index += 1
-            if self.tokens[self.index][0] =='ID':
+            if self.tokens[self.index][0] == 'ID':
                 self.index += 1
-                if self.tokens[self.index][0] =='{':
+                if self.tokens[self.index][0] == '{':
                     self.index += 1
-                
-                    if self.class_body1 ():
+
+                    if self.class_body1():
                         return True
-                        
-                    if self.tokens[self.index][0] =='}':
+
+                    if self.tokens[self.index][0] == '}':
                         self.index += 1
                         return True
-    
+
     def mode_inheritance(self):
         if self.tokens[self.index][0] == "class":
             self.index += 1
@@ -686,7 +684,6 @@ class SyntaxPhase:
                                             return True
         return False
 
-        
     def access_modifier(self):
         if self.tokens[self.index][0] in ["public", "private", "protected"]:
             self.index += 1
@@ -694,24 +691,23 @@ class SyntaxPhase:
                 self.index += 1
             return True
         return False
+
     def class_body1(self):
-        
+
         if self.dec():
             if self.class_body1():
-                   return True
+                return True
         elif self.access_modifier():
             if self.dec():
                 if self.class_modifier():
                     if self.class_body1():
-                        return True            
-            
+                        return True
+
         elif self.SST():
             if self.class_body1():
-                   return True              
+                return True
 
-
-
-        return False   
+        return False
 
     def class_modifier(self):
         if self.tokens[self.index][0] in ["static", "virtual", "const"]:
@@ -736,7 +732,8 @@ class SyntaxPhase:
                 self.index += 1
                 return True
         return False
-    #TS
+    # TS
+
     def ts(self):
         if self.tokens[self.index][0] == "this":
             self.index += 1
@@ -785,6 +782,7 @@ class SyntaxPhase:
                         return True
         return False
      # OBJECT DECLARATION
+
     def obj_dec(self):
         if (
             self.tokens[self.index][0] == "ID" and
@@ -869,7 +867,8 @@ class SyntaxPhase:
             if self.pl1():
                 return True
         return False
-     #FUNCTION-DECLARATION
+     # FUNCTION-DECLARATION
+
     def Function(self):
         # if (self.tokens[self.index][0] == "void" or (self.tokens[self.index][0] == "DT" and self.tokens[self.index+1][0] == "ID")):
         #     self.index += 2
@@ -880,7 +879,7 @@ class SyntaxPhase:
                     self.index += 1
                     if self.body():
                         return True
-                        
+
         return False
 
     # def func_ret_type(self):
@@ -978,7 +977,8 @@ class SyntaxPhase:
                         if self.body():
                             return True
         return False
-    #FUNCTION CALLING
+    # FUNCTION CALLING
+
     def arg(self):
         if self.OE():
             if self.arg2():
@@ -996,8 +996,9 @@ class SyntaxPhase:
         elif self.tokens[self.index][1] == ")":
             return True
         return False
-     #OE
+     # OE
     # ///////////////////////////////////////EXPRESSION///////////////////////////////////
+
     def OE(self):
         if not self.AE():
             return False
@@ -1057,7 +1058,7 @@ class SyntaxPhase:
         return True
 
     def E_prime(self):
-        if self.tokens[self.index][0] in ('PM', 'MDM') or self.tokens[self.index][1]=='=':
+        if self.tokens[self.index][0] in ('PM', 'MDM') or self.tokens[self.index][1] == '=':
             self.index += 1
             if not self.T():
                 return False
@@ -1084,12 +1085,12 @@ class SyntaxPhase:
         return True
 
     def F(self):
-        if self.tokens[self.index][0] =='ID':
+        if self.tokens[self.index][0] == 'ID':
             self.index += 1
             return True
         elif self.constant():
             return True
-                
+
         elif self.tokens[self.index][0] == '(':
             self.index += 1
             if not self.OE():
@@ -1105,14 +1106,13 @@ class SyntaxPhase:
             return True
         # handle other cases for <F>
         return False
-      
 
     def ts3(self):
         if (
             self.tokens[self.index][1] == "this" or self.tokens[self.index][1] == "super"
             or self.tokens[self.index][0] == "ID"
         ):
-           
+
             if (
                 self.tokens[self.index][1] == "this" and self.tokens[self.index + 1][1] == "."
             ):
@@ -1356,10 +1356,10 @@ class SyntaxPhase:
             return True
         return False
 
-        #class 
-        
-          
-    #ARRAY-DEC
+        # class
+
+    # ARRAY-DEC
+
     def br(self):
         if self.tokens[self.index][1] == "[":
             self.index += 1
@@ -1372,13 +1372,13 @@ class SyntaxPhase:
         return False
 
     def ar(self):
-        if(self.tokens[self.index][0]=="ID"):
+        if (self.tokens[self.index][0] == "ID"):
             return True
         if self.tokens[self.index][1] == "[":
             self.index += 1
             if self.tokens[self.index][1] == "]":
                 self.index += 1
-                if(self.tokens[self.index][1] == "["):
+                if (self.tokens[self.index][1] == "["):
                     return False
                 return True
         return False
@@ -1463,16 +1463,52 @@ class SyntaxPhase:
         elif self.tokens[self.index][1] == "}":
             return True
         return False
- 
-
-   
 
     def S(self):
         while self.tokens[self.index][0] != "$":
-            if not(self.SST()):
+            if not (self.SST()):
                 return False
 
         return True
+
+    def _Class(self):
+        if (self.ClassSpecifier()):
+            if (self.tokens[self.index][1] == "class"):
+                self.index += 1
+                if (self.tokens[self.index][0] == "ID"):
+                    self.index += 1
+                    if (self.inh()):
+                        if (self.tokens[self.index][1] == "{"):
+                            self.index += 1
+                            if (self.ClassBody()):
+                                if (self.tokens[self.index][1] == "}"):
+                                    self.index += 1
+                                    return True
+        return False
+
+    def ClassSpecifier(self):
+        if (self.tokens[self.index][1] == "class"):
+            return True
+        if (self.tokens[self.index][1] == "sealed" or self.tokens[self.index][1] == "abstract"):
+            self.index += 1
+            return True
+        return False
+
+    def inh(self):
+        if (self.tokens[self.index][1] == "{"):
+            return True
+
+        if (self.tokens[self.index][1] == ":"):
+            self.index += 1
+            if (self.tokens[self.index][0] == "ID"):
+                self.index += 1
+                return True
+        return False
+
+    def ClassBody(self):
+        if (self.tokens[self.index][1] == "}"):
+            return True
+        return False
 
 
 if __name__ == '__main__':
@@ -1481,7 +1517,7 @@ if __name__ == '__main__':
     # Define the regular expressions for tokens
     Tokenizer.define_tokens()
 
-    file_path = "./input.txt" # Replace with the actual absolute path to the file
+    file_path = "./input.txt"  # Replace with the actual absolute path to the file
     if os.path.exists(file_path):
         with open(file_path) as file_handler:
             t = Tokenizer(file_handler)
@@ -1494,8 +1530,3 @@ if __name__ == '__main__':
         syntax_phase.run()
     else:
         print(f"File not found at the specified path: {file_path}")
-
-
-             
-       
-   
