@@ -530,8 +530,8 @@ class SemanticClass:
         self.Am = "private"
         self.Tm = None
         self.Cat = None
-        self.index = 0
-        self.scope = [0]
+        self.scopeno = 0
+        self.scope = []
         self.mainTable = []
         self.functionTable = []
 
@@ -574,7 +574,7 @@ class SemanticClass:
         functionTable = {
             'name': name,
             'type': type,
-            'scope': self.index
+            'scope': self.scopeno
         }
         if functionTable not in self.functionTable :
          
@@ -654,11 +654,16 @@ class SemanticClass:
         pass
 
     def createScope(self):
-        self.index += 1
-        self.scope.append(self.index)
+        self.scopeno+=1
+        
+        self.scope.append(self.scopeno)
+       
+      
 
     def destroyScope(self):
+        self.scopeno-=1
         self.scope.pop()
+       
        
     
 
@@ -717,28 +722,27 @@ class SyntaxPhase:
        
    
     #####################################DECLARATION############################
-    def dec(self):
-        if (
-            self.tokens[self.index][0] == "DT"):
-            self.T=self.tokens[self.index][1]
-            self.index+=1
-            if(self.tokens[self.index][0] == "ID"):
-                self.N=self.tokens[self.index][1]
+    # def dec(self):
+    #     if (
+    #         self.tokens[self.index][0] == "DT"):
+    #         self.T=self.tokens[self.index][1]
+    #         self.index+=1
+    #         if(self.tokens[self.index][0] == "ID"):
+    #             self.N=self.tokens[self.index][1]
+               
                 
 
               
 
-                self.index += 1
+    #             self.index += 1
              
-            if self.init():
-                if self.list():
-                    return True
-        return False
+    #         if self.init():
+    #             if self.list():
+    #                 return True
+    #     return False
 
     def dec2(self):
         if self.tokens[self.index][1] in ["=", ",", ";"]:
-           
-           
             
             if self.init():
                
@@ -748,6 +752,7 @@ class SyntaxPhase:
 
     def init(self):
         if self.tokens[self.index][1] == "=":
+           
             
             self.index += 1
             
@@ -755,6 +760,7 @@ class SyntaxPhase:
                 return True
           
         elif self.tokens[self.index][1] in [";", ","]:
+           
             
            
             return True
@@ -772,20 +778,20 @@ class SyntaxPhase:
 
     def list(self):
         if self.tokens[self.index][1] == ";":
+         
+          
             self.index += 1
-            self.semantic_class.insert_FT(self.N,self.T)
+           
             
             return True
         elif (
             self.tokens[self.index][1] == ","):
             self.index+=1
+            
           
             if(self.tokens[self.index][0] == "ID"):
-                self.N1=self.tokens[self.index][1]
+                self.N=self.tokens[self.index][1]
                 self.index += 1
-                self.semantic_class.insert_FT(self.N1,self.T)
-             
-            
 
             if self.dec2():
                 return True
@@ -795,12 +801,15 @@ class SyntaxPhase:
     ############################################ #BODY#########################
     def body(self):
         if self.tokens[self.index][1] == "{":
+            
             self.index += 1
             
             if self.MST():
                
                 if self.tokens[self.index][1] == "}":
+                    
                     self.index += 1
+                    self.semantic_class.destroyScope()
                     return True
         return False
     ############################### MST ###########
@@ -931,8 +940,11 @@ class SyntaxPhase:
         if self.tokens[self.index][0] == "ID":
             self.N=self.tokens[self.index][1]
            
+            
             self.index += 1
             if self.dec2():
+                self.semantic_class.insert_FT(self.N,self.T)
+                
                 
                 return True
             elif self.Function():
@@ -967,13 +979,14 @@ class SyntaxPhase:
                             self.index += 1
                             self.semantic_class.createScope()
                             if self.OE():
-                                self.semantic_class.insert_FT(self.N,self.T)
+                                if(self.N!=None):
+                                    self.semantic_class.insert_FT(self.N,self.T)
                                 if self.tokens[self.index][1] == ")":
                                     self.index += 1
                                     if self.tokens[self.index][1] == ":":
                                         self.index += 1
                                         if self.body():
-                                            self.semantic_class.destroyScope()
+                                            #self.semantic_class.destroyScope()
                                             self.N=None
                                             self.T=None
                                             return True
@@ -988,14 +1001,15 @@ class SyntaxPhase:
                 self.index += 1
 
                 if self.OE():
-                    self.semantic_class.insert_FT(self.N,self.T)
+                    if (self.N!=None):
+                        self.semantic_class.insert_FT(self.N,self.T)
                     if self.tokens[self.index][1] == ")":
                         self.index += 1
 
                         if self.body():
-                           
+                        
 
-                            self.semantic_class.destroyScope()
+                            #self.semantic_class.destroyScope()
                             self.N=None
                             self.T=None
                             return True
@@ -1010,11 +1024,12 @@ class SyntaxPhase:
                 self.semantic_class.createScope()
                 self.index += 1
                 if self.OE():
-                    self.semantic_class.insert_FT(self.N,self.T)
+                    if (self.N != None):
+                        self.semantic_class.insert_FT(self.N,self.T)
                     if self.tokens[self.index][1] == ")":
                         self.index += 1
                         if self.body():
-                            self.semantic_class.destroyScope()
+                            #self.semantic_class.destroyScope()
                             self.N=None
                             self.T=None
                             if self.else_state():
@@ -1026,7 +1041,7 @@ class SyntaxPhase:
             self.semantic_class.createScope()
             if self.body():
                 self.semantic_class.insert_FT(self.N,self.T)
-                self.semantic_class.destroyScope()
+                #self.semantic_class.destroyScope()
                 self.N=None
                 self.T=None
                 return True
@@ -1801,7 +1816,7 @@ class SyntaxPhase:
         return True
 
     def E_prime(self):
-        if (self.tokens[self.index][0] in ('PM', 'MDM') or self.tokens[self.index][1]=='='):
+        if (self.tokens[self.index][0] in ('PM') or self.tokens[self.index][1]=='='):
             self.opr=self.tokens[self.index][1]
             self.T3=self.semantic_class.compatibility(self.T,self.T,self.opr)
             self.index += 1
@@ -2778,7 +2793,7 @@ class SyntaxPhase:
                 if self.tokens[self.index][1] == ")":
                     self.index += 1
                     if self.body():
-                        self.semantic_class.destroyScope()
+                       # self.semantic_class.destroyScope()
                         return True
         return False
     
@@ -2849,10 +2864,6 @@ syntax_phase = SyntaxPhase(tokens)
 syntax_phase.run()
 
     
-
-             
-       
-   
 
              
        
