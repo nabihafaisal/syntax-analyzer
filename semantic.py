@@ -38,7 +38,7 @@ class Tokenizer:
         Tokenizer.punctuators = [',', ';', ':', '.']
         Tokenizer.PM = ['+', '-']
         Tokenizer.MDM = ['*', '/', '%']
-        Tokenizer.logical_operators = ['!', '&', '|']
+        Tokenizer.logical_operators = ['!', 'and', 'or']
         Tokenizer.assignment = ['=']
         Tokenizer.relational_operators = ['<', '>', '<=', '>=', '!=', '==']
         Tokenizer.assignment_operators = ['+=', '-=', '==', '*=', '%=']
@@ -126,6 +126,11 @@ class Tokenizer:
             if self.token_buffer in Tokenizer.boolean_constants:
                 token = self.token_buffer
                 token_name = 'BOOLEAN'
+                self.increment_pointer()
+                continue
+            if self.token_buffer in Tokenizer.logical_operators:
+                token = self.token_buffer
+                token_name = self.token_buffer
                 self.increment_pointer()
                 continue
 
@@ -375,11 +380,7 @@ class Tokenizer:
                 self.increment_pointer()
                 continue
 
-            if self.token_buffer in Tokenizer.logical_operators:
-                token = self.token_buffer
-                token_name = 'LOGICAL_OPERATOR'
-                self.increment_pointer()
-                continue
+            
             
             if self.token_buffer in Tokenizer.relational_operators:
                 token = self.token_buffer
@@ -445,9 +446,7 @@ class Tokenizer:
                 print(f'Lexical error: {e} - Line: {t.start_line_num} - Column: {t.start_col_num}')
                 t.token_buffer = ''
 
-
-
-
+###################SEMANTIC CLASS#####################################
 class MainTable:
     def __init__(self):
         self.name = None
@@ -560,13 +559,15 @@ class SemanticClass:
             'name': name,
             'type': type,
             'type_modifier': typemodifier,
-            'access_modifier': accessmodifier
+            'access_modifier': accessmodifier,
+            'link': link
+
         }
         if bodyTable not in link:
             link.append(bodyTable)
             return True
         else:
-            print(f"Variable '{bodyTable['name']}' is already defined in this scope")
+           # print(f"Variable '{bodyTable['name']}' is already defined in this scope")
             return False
 
     def insert_FT(self, name, type):
@@ -575,12 +576,23 @@ class SemanticClass:
             'type': type,
             'scope': self.index
         }
-        if functionTable not in self.functionTable:
-            self.functionTable.append(functionTable)
-            return True
+        if functionTable not in self.functionTable :
+         
+                self.functionTable.append(functionTable)
+                return True
+        
         else:
             print(f"Variable '{functionTable['name']}' is already defined in this scope")
             return False
+   
+
+ 
+
+
+
+    
+
+
 
     def lookup_MT(self, name):
         for var in self.mainTable:
@@ -608,26 +620,26 @@ class SemanticClass:
                 return var['type']
         return "null"
 
-    def compatibility(T1, T2, opr):
-        if T1 == "num" and T2 == "num":
+    def compatibility(T1, T2, opr,self):
+        if T1 == "int" and T2 == "int":
             if opr == "*" or opr == "/" or opr == "+" or opr == "-":
-                return "num"
+                return "int"
 
-        if (T1 == "num" and T2 == "dec") or (T2 == "num" and T1 == "dec"):
+        if (T1 == "int" and T2 == "float") or (T2 == "int" and T1 == "float"):
             if opr == "*" or opr == "/" or opr == "-" or opr == "+":
-                return "dec"
+                return "float"
 
-        if T1 == "String" and T2 == "String":
+        if T1 == "string" and T2 == "string":
             if opr == "+":
-                return "String"
+                return "string"
 
-        if T1 == "Alpha" and T2 == "Alpha":
+        if T1 == "character" and T2 == "character":
             if opr == "+":
                 return "Alpha"
 
-        if (T1 == "String" and T2 == "Alpha") or (T2 == "String" and T1 == "Alpha"):
+        if (T1 == "string" and T2 == "character") or (T2 == "string" and T1 == "character"):
             if opr == "+":
-                return "String"
+                return "string"
 
         if opr == "or" or opr == "and":
             return "bool"
@@ -647,9 +659,8 @@ class SemanticClass:
 
     def destroyScope(self):
         self.scope.pop()
-        self.T="null"
-        self.N="null"
-
+       
+    
 
 
 #########################SYNTAX ANALYZER###########################
@@ -689,7 +700,7 @@ class SyntaxPhase:
       
 
     def run(self):
-        if self.S():
+        if self.S0():
             if self.index< len(self.tokens):
                 if self.tokens[self.index][0] == "$":
                     print("No Syntax Error  :)")
@@ -713,6 +724,7 @@ class SyntaxPhase:
             self.index+=1
             if(self.tokens[self.index][0] == "ID"):
                 self.N=self.tokens[self.index][1]
+                
 
               
 
@@ -725,55 +737,68 @@ class SyntaxPhase:
 
     def dec2(self):
         if self.tokens[self.index][1] in ["=", ",", ";"]:
+           
+           
+            
             if self.init():
+               
                 if self.list():
                     return True
         return False
 
     def init(self):
         if self.tokens[self.index][1] == "=":
+            
             self.index += 1
+            
             if self.OE():
                 return True
           
         elif self.tokens[self.index][1] in [";", ","]:
+            
+           
             return True
         return False
 
-    def fs(self):
-        if self.tokens[self.index][0] == "static":
-            self.cTm=self.tokens[self.index][1]
-            self.index += 1
+    # def fs(self):
+    #     if self.tokens[self.index][0] == "static":
+    #         self.cTm=self.tokens[self.index][1]
+    #         self.index += 1
        
-        elif self.tokens[self.index][0] == "DT":
-            self.T=self.tokens[self.index][1]
-            self.index += 1
-        return False
+    #     elif self.tokens[self.index][0] == "DT":
+    #         self.T=self.tokens[self.index][1]
+    #         self.index += 1
+    #     return False
 
     def list(self):
         if self.tokens[self.index][1] == ";":
             self.index += 1
             self.semantic_class.insert_FT(self.N,self.T)
+            
             return True
         elif (
-            self.tokens[self.index][1] == ","
-            and self.tokens[self.index + 1][0] == "ID"
-        ):
-            self.N1=self.tokens[self.index+1][1]
-            self.index += 2
-            self.semantic_class.insert_FT(self.N1,self.T)
+            self.tokens[self.index][1] == ","):
+            self.index+=1
+          
+            if(self.tokens[self.index][0] == "ID"):
+                self.N1=self.tokens[self.index][1]
+                self.index += 1
+                self.semantic_class.insert_FT(self.N1,self.T)
+             
+            
 
             if self.dec2():
                 return True
         return False
-    
     
 
     ############################################ #BODY#########################
     def body(self):
         if self.tokens[self.index][1] == "{":
             self.index += 1
+            
             if self.MST():
+               
                 if self.tokens[self.index][1] == "}":
                     self.index += 1
                     return True
@@ -828,14 +853,23 @@ class SyntaxPhase:
                 if self.ts():
                     return True
             elif self.tokens[self.index][0] == "DT":
+                self.T=self.tokens[self.index][1]
                 self.index += 1
                 if self.SST2():
                     return True
             elif self.tokens[self.index][0] == "void" and self.tokens[self.index+1][0]=="ID":
+                self.T=self.tokens[self.index][1]
+                self.N=self.tokens[self.index+1][1]
                 self.index += 2
                 if self.Function():
                     return True
             elif self.tokens[self.index][0] == "ID":
+                self.N=self.tokens[self.index][1]
+                self.T=self.semantic_class.lookup_MT(self.N)
+                if self.T=="null":
+                    print("Undeclared "+self.N)
+                else:
+                    self.Prnt=self.N
                 self.index += 1
                 if self.SST1():
                     return True
@@ -848,6 +882,12 @@ class SyntaxPhase:
             if self.tokens[self.index][0] == "new":
                 self.index += 1
                 if self.tokens[self.index][0] == "ID":
+                    self.N=self.tokens[self.index][1]
+                    self.T=self.semantic_class.lookup_MT(self.N)
+                    if self.T=="null":
+                        print("Undeclared "+self.N)
+                    else:
+                        self.Prnt=self.N
                     self.index += 1
                     if self.tokens[self.index][1] == "(":
                         self.index += 1
@@ -869,6 +909,12 @@ class SyntaxPhase:
             or self.tokens[self.index][1] == "="
         ):
             if self.tokens[self.index][0] == "ID":
+                self.N=self.tokens[self.index][1]
+                self.T=self.semantic_class.lookup_MT(self.N)
+                if self.T=="null":
+                    print("Undeclared "+self.N)
+                else:
+                    self.Prnt=self.N
                 self.index += 1
                 if self.obj2():
                     return True
@@ -883,17 +929,24 @@ class SyntaxPhase:
 
     def SST2(self):
         if self.tokens[self.index][0] == "ID":
+            self.N=self.tokens[self.index][1]
+           
             self.index += 1
             if self.dec2():
+                
                 return True
             elif self.Function():
                 return True
         elif self.tokens[self.index][1] == "[":
+            self.T+=self.tokens[self.index][1]
             self.index += 1
             if self.tokens[self.index][1] == "]":
+                self.T+=self.tokens[self.index][1]
                 self.index += 1
                 if self.br():
                     if self.tokens[self.index][0] == "ID":
+                        self.N=self.tokens[self.index][1]
+                        self.semantic_class.insert_FT(self.N,self.T)
                         self.index += 1
                         if self.Arraydef():
                             if self.tokens[self.index][1] == ";":
@@ -921,9 +974,10 @@ class SyntaxPhase:
                                         self.index += 1
                                         if self.body():
                                             self.semantic_class.destroyScope()
+                                            self.N=None
+                                            self.T=None
                                             return True
         return False
-    
     
     ############################################### WHILE LOOP############################
     def while_state(self):
@@ -942,6 +996,8 @@ class SyntaxPhase:
                            
 
                             self.semantic_class.destroyScope()
+                            self.N=None
+                            self.T=None
                             return True
 
         return False
@@ -959,6 +1015,8 @@ class SyntaxPhase:
                         self.index += 1
                         if self.body():
                             self.semantic_class.destroyScope()
+                            self.N=None
+                            self.T=None
                             if self.else_state():
                                 return True
         return False
@@ -967,7 +1025,10 @@ class SyntaxPhase:
             self.index += 1
             self.semantic_class.createScope()
             if self.body():
+                self.semantic_class.insert_FT(self.N,self.T)
                 self.semantic_class.destroyScope()
+                self.N=None
+                self.T=None
                 return True
         elif (
             self.tokens[self.index][0] in [
@@ -1005,6 +1066,8 @@ class SyntaxPhase:
             self.index += 1
             if self.ts2():
                 return True
+        
+        
      
         return False
 
@@ -1139,9 +1202,12 @@ class SyntaxPhase:
 
     def func_ret_type(self):
         if self.tokens[self.index][0] == "void":
+            self.T=self.tokens[self.index][1]
+             
             self.index += 1
             return True
         elif self.tokens[self.index][0] == "DT":
+            self.T=self.tokens[self.index][1]
             self.index += 1
             if self.br():
                 return True
@@ -1161,14 +1227,18 @@ class SyntaxPhase:
     ##################################### ABSTRACT METHOD ################################# 
     def hid_method(self):
         if self.tokens[self.index][0] == "abstract":
+            self.cTm=self.tokens[self.index][0]
             self.index += 1
             if self.func_ret_type():
                 if self.tokens[self.index][0] == "ID":
+                    self.N=self.tokens[self.index][1]
+
                     self.index += 1
                     if self.tokens[self.index][1] == "(":
                         self.index += 1
                         if self.param():
                             if self.tokens[self.index][1] == ")":
+                                self.semantic_class.insert_DT(self.N,self.T,self.Am,self.cTm,self.refDt)
                                 self.index += 1
                                 if self.tokens[self.index][1] == ";":
                                     self.index += 1
@@ -1184,10 +1254,14 @@ class SyntaxPhase:
                     if self.param1():
                         return True
         elif self.tokens[self.index][0] == "DT":
+            self.P=self.T+"-->"
+            self.T=self.tokens[self.index][1]
             self.index += 1
             if self.br():
                 if self.tokens[self.index][0] == "ID":
+                    self.N1=self.tokens[self.index][1]
                     self.index += 1
+                    self.semantic_class.insert_FT(self.N1,self.T)
                     if self.param1():
                         return True
         elif self.tokens[self.index][1] == ")":
@@ -1205,16 +1279,34 @@ class SyntaxPhase:
 
     def param2(self):
         if self.tokens[self.index][0] == "ID":
+            self.N=self.tokens[self.index][1]
+            self.Ftype=self.semantic_class.lookup_MT(self.N)
+            if self.Ftype==None:
+                print("Undeclared:  "+self.N)
+            self.P+="," +self.N
             self.index += 1
             if self.br():
                 if self.tokens[self.index][0] == "ID":
+                    self.Fname=self.tokens[self.index][1]
+                    if not self.semantic_class.insert_FT(self.Fname, self.Ftype):
+                        print("Redeclaration")
+
                     self.index += 1
                     if self.param1():
                         return True
         elif self.tokens[self.index][0] == "DT":
+            self.P+=self.T
+            self.T=self.tokens[self.index][1]
+            self.P+=","+self.T
+         
+
             self.index += 1
             if self.br():
                 if self.tokens[self.index][0] == "ID":
+                    self.N1=self.tokens[self.index][1]
+                    self.semantic_class.insert_FT(self.N1,self.T)
+                    if not self.semantic_class.insert_FT(self.N,self.P):
+                        print("Redeclaration")
                     self.index += 1
                     if self.param1():
                         return True
@@ -1224,13 +1316,20 @@ class SyntaxPhase:
 
     def fun2_body(self):
         if self.tokens[self.index][0] == "ID":
+            self.cName=self.tokens[self.index][1]
             self.index += 1
             if self.tokens[self.index][1] == "(":
+                self.semantic_class.createScope()
                 self.index += 1
                 if self.param():
                     if self.tokens[self.index][1] == ")":
                         self.index += 1
+                        
+                        if not self.semantic_class.insert_DT(self.cName,self.P+"->",self.cTm,self.Am,self.refDt):
+                                self.Dtempty()
+                                print("Function Reclaration")
                         if self.body():
+                            self.semantic_class.destroyScope()
                             return True
         return False
     ########################################FUNCTION CALLING#######################################
@@ -1252,133 +1351,8 @@ class SyntaxPhase:
             return True
         return False
     
-    #  ################################################# OE ####################################
-    def constant(self):
-        if self.tokens[self.index][0] == "INTEGER":
-            self.index += 1
-            return True
-        elif self.tokens[self.index][0] == "FLOAT":
-            self.index += 1
-            return True
-        elif self.tokens[self.index][0] == "BOOLEAN":
-            self.index += 1
-            return True
-        elif self.tokens[self.index][0] == "CHARACTER":
-            self.index += 1
-        elif self.tokens[self.index][0] == "STRING":
-            self.index += 1
-       
-       
-        
-            return True
-        return False
-    def OE(self):
-        if not self.AE():
-            return False
-        if not self.OE_prime():
-            return False
-        return True
+     ################################################# OE ####################################
 
-    def OE_prime(self):
-        if self.tokens[self.index][0] == 'or':
-            self.index += 1
-            if not self.AE():
-                return False
-            if not self.OE_prime():
-                return False
-        # handle epsilon
-        return True
-
-    def AE(self):
-        if not self.RE():
-            return False
-        if not self.AE_prime():
-            return False
-        return True
-
-    def AE_prime(self):
-        if self.tokens[self.index][0] == 'and':
-            self.index += 1
-            if not self.RE():
-                return False
-            if not self.AE_prime():
-                return False
-        # handle epsilon
-        return True
-
-    def RE(self):
-        if not self.E():
-            return False
-        if not self.RE_prime():
-            return False
-        return True
-
-    def RE_prime(self):
-        if self.tokens[self.index][0] == 'ROP':
-            self.index += 1
-            if not self.E():
-                return False
-            if not self.RE_prime():
-                return False
-        # handle epsilon
-        return True
-
-    def E(self):
-        if not self.TI():
-            return False
-        if not self.E_prime():
-            return False
-        return True
-
-    def E_prime(self):
-        if (self.tokens[self.index][0] in ('PM', 'MDM') or self.tokens[self.index][1]=='='):
-            self.index += 1
-            if not self.TI():
-                return False
-            if not self.E_prime():
-                return False
-        # handle epsilon
-        return True
-
-    def TI(self):
-        if not self.F():
-            return False
-        if not self.T_prime():
-            return False
-        return True
-
-    def T_prime(self):
-        if self.tokens[self.index][0] == 'MDM':
-            self.index += 1
-            if not self.F():
-                return False
-            if not self.T_prime():
-                return False
-        # handle epsilon
-        return True
-
-    def F(self):
-        if self.tokens[self.index][0] =='ID':
-            self.index += 1
-            return True
-        elif self.constant():
-            return True    
-        elif self.tokens[self.index][0] == '(':
-            self.index += 1
-            if not self.OE():
-                return False
-            if self.tokens[self.index][0] != ')':
-                return False
-            self.index += 1
-            return True
-        elif self.tokens[self.index][0] == '!':
-            self.index += 1
-            if not self.F():
-                return False
-            return True
-        # handle other cases for <F>
-        return False
-    
       
     # def OE(self):
     #     if (
@@ -1412,7 +1386,7 @@ class SyntaxPhase:
     #         if self.AE():
     #             if self.OE1():
     #                 return True
-    #     elif self.tokens[self.index][0] in ["and", "or", "ROP", "PM"]or self.tokens[self.index][1] in [ ";", ",", ")", "]", "}"]:
+    #     elif self.tokens[self.index][1] in [ ";", ",", ")", "]", "}"]:
     #         return True
     #     return False
 
@@ -1424,7 +1398,7 @@ class SyntaxPhase:
     #         if self.RE():
     #             if self.AE1():
     #                 return True
-    #     elif self.tokens[self.index][0] in ["and", "or", "ROP", "PM"]or self.tokens[self.index][1] in [ ";", ",", ")", "]", "}"]:
+    #     elif self.tokens[self.index][0] in ["or"]or self.tokens[self.index][1] in [ ";", ",", ")", "]", "}"]:
     #         return True
     #     return False
 
@@ -1447,7 +1421,7 @@ class SyntaxPhase:
     #         if self.E():
     #             if self.RE1():
     #                 return True
-    #     elif self.tokens[self.index][0] in ["and", "or", "ROP", "PM"]or self.tokens[self.index][1] in [ ";", ",", ")", "]", "}"]:
+    #     elif self.tokens[self.index][0] in ["and", "or"]or self.tokens[self.index][1] in [ ";", ",", ")", "]", "}"]:
     #         return True
     #     return False
 
@@ -1470,7 +1444,7 @@ class SyntaxPhase:
     #         if self.T():
     #             if self.E1():
     #                 return True
-    #     elif self.tokens[self.index][0] in ["and", "or", "ROP", "PM"]or self.tokens[self.index][1] in [ ";", ",", ")", "]", "}"]:
+    #     elif self.tokens[self.index][0] in ["and", "or", "ROP"]or self.tokens[self.index][1] in [ ";", ",", ")", "]", "}"]:
     #         return True
     #     return False
 
@@ -1536,6 +1510,17 @@ class SyntaxPhase:
     #     ):
     #         if self.R():
     #             return True
+    #     elif(self.tokens[self.index][0] == "and"
+    #         or self.tokens[self.index][0] == "MDM"
+    #         or self.tokens[self.index][0] == "PM"
+    #         or self.tokens[self.index][0] == "or"
+    #         or self.tokens[self.index][0] == "ROP"
+    #         or self.tokens[self.index][1] == ";"
+    #         or self.tokens[self.index][1] == ","
+    #         or self.tokens[self.index][1] == ")"
+    #         or self.tokens[self.index][1] == "]"
+    #         or self.tokens[self.index][1] == "}"):
+    #          return True
     #     return False
 
     # def F(self):
@@ -1649,6 +1634,7 @@ class SyntaxPhase:
     #         or self.tokens[self.index][1] == ")"
     #         or self.tokens[self.index][1] == "]"
     #         or self.tokens[self.index][1] == "}"
+    #          or self.tokens[self.index][1]=="."
     #     ):
     #         if self.R1():
     #             return True
@@ -1731,35 +1717,157 @@ class SyntaxPhase:
     #             return True
     #     return False
 
-    # def constant(self):
-    #     if self.tokens[self.index][0] == "INTEGER":
-    #         self.index += 1
-    #         return True
-    #     elif self.tokens[self.index][0] == "FLOAT":
-    #         self.index += 1
-    #         return True
-    #     elif self.tokens[self.index][0] == "BOOLEAN":
-    #         self.index += 1
-    #         return True
-    #     elif self.tokens[self.index][0] == "CHARACTER":
-    #         self.index += 1
-    #     elif self.tokens[self.index][0] == "STRING":
-    #         self.index += 1
+    def constant(self):
+        if self.tokens[self.index][0] == "INTEGER":
+            self.index += 1
+            self.T="int"
+            return True
+        elif self.tokens[self.index][0] == "FLOAT":
+            self.index += 1
+            self.T="float"
+            return True
+        elif self.tokens[self.index][0] == "BOOLEAN":
+            self.index += 1
+            self.T="bool"
+            return True
+        elif self.tokens[self.index][0] == "CHARACTER":
+            self.index += 1
+            self.T="character"
+        elif self.tokens[self.index][0] == "STRING":
+            self.index += 1
+            self.T="string"
        
        
         
-    #         return True
-    #     return False
+            return True
+        return False
+    def OE(self):
+        if not self.AE():
+            return False
+        if not self.OE_prime():
+            return False
+        return True
+
+    def OE_prime(self):
+        if self.tokens[self.index][0] == 'or':
+            self.opr=self.tokens[self.index][0]
+            self.index += 1
+            if not self.AE():
+                return False
+            if not self.OE_prime():
+                return False
+        # handle epsilon
+        return True
+
+    def AE(self):
+        if not self.RE():
+            return False
+        if not self.AE_prime():
+            return False
+        return True
+
+    def AE_prime(self):
+        if self.tokens[self.index][0] == 'and':
+            self.index += 1
+            if not self.RE():
+                return False
+            if not self.AE_prime():
+                return False
+        # handle epsilon
+        return True
+
+    def RE(self):
+        if not self.E():
+            return False
+        if not self.RE_prime():
+            return False
+        return True
+
+    def RE_prime(self):
+        if self.tokens[self.index][0] == 'ROP':
+            self.index += 1
+            if not self.E():
+                return False
+            if not self.RE_prime():
+                return False
+        # handle epsilon
+        return True
+
+    def E(self):
+        if not self.TI():
+            return False
+        if not self.E_prime():
+            return False
+        return True
+
+    def E_prime(self):
+        if (self.tokens[self.index][0] in ('PM', 'MDM') or self.tokens[self.index][1]=='='):
+            self.opr=self.tokens[self.index][1]
+            self.T3=self.semantic_class.compatibility(self.T,self.T,self.opr)
+            self.index += 1
+            if not self.TI():
+                return False
+            if not self.E_prime():
+                return False
+        # handle epsilon
+        return True
+
+    def TI(self):
+        if not self.F():
+            return False
+        if not self.T_prime():
+            return False
+        return True
+
+    def T_prime(self):
+        if self.tokens[self.index][0] == 'MDM':
+            self.opr=self.tokens[self.index][1]
+            self.index += 1
+            self.T3=self.semantic_class.compatibility(self.T,self.T,self.opr)
+            if not self.F():
+                return False
+            if not self.T_prime():
+                return False
+        # handle epsilon
+        return True
+
+    def F(self):
+        if self.tokens[self.index][0] =='ID':
+            self.N=self.tokens[self.index][1]
+            self.T=self.semantic_class.lookup_FT(self.N)
+            if (self.T=="null"):
+                print("UNDECLARED")
+            self.index += 1
+            return True,self.T
+        elif self.constant():
+            return True,self.T    
+        elif self.tokens[self.index][0] == '(':
+            self.index += 1
+            if not self.OE():
+                return False
+            if self.tokens[self.index][0] != ')':
+                return False
+            self.index += 1
+            return True
+        elif self.tokens[self.index][0] == '!':
+            self.index += 1
+            if not self.F():
+                return False
+            return True,self.T
+        # handle other cases for <F>
+        return False
     
     ################################################ ARRAY-DEC ##################################
 
     def br(self):
         if self.tokens[self.index][1] == "[":
+            self.T+=self.tokens[self.index][1]
             self.index += 1
             if self.tokens[self.index][1] == "]":
+                self.T+=self.tokens[self.index][1]
                 self.index += 1
-                if self.br():
-                    return True
+                
+                return True
         elif self.tokens[self.index][0] in ["abstract", "ID"]:
             return True
         return False
@@ -1846,17 +1954,831 @@ class SyntaxPhase:
             return True
         return False
  
- 
+    ################################################ CLASS #################################
+    def class_state(self):
+        if self.tokens[self.index][0] == "abstract":
+            self.Cat=self.tokens[self.index][1]
+            self.index += 1
+            if self.tokens[self.index][0] == "class":
+                self.T="class"
+                self.index += 1
+                if self.tokens[self.index][0] == "ID":
+                    self.N=self.tokens[self.index][1]
+                    self.index += 1
+                    if self.inherit():
+                        self.refDt=self.semantic_class.create_DT()
+                        self.semantic_class.insert_MT(self.N,self.T,self.Am,self.Cat,self.Prnt,self.refDt)
+                        if self.tokens[self.index][0] == "{":
+                            self.semantic_class.createScope()
+                            self.index += 1
+                            if self.C1():
+                                return True
+        elif self.seal():
+            if self.tokens[self.index][0] == "class":
+                self.T="class"
+                self.index += 1
+                if self.tokens[self.index][0] == "ID":
+                    self.N=self.tokens[self.index][1]
+                    self.index += 1
+                    if self.inherit():
+                        self.refDt=self.semantic_class.create_DT()
+                        self.semantic_class.insert_MT(self.N,self.T,self.Am,self.Cat,self.Prnt,self.refDt)
+                       
+                        if self.tokens[self.index][1] == "{":
+                            self.semantic_class.createScope()
+                            self.index += 1
+                            if self.D1():
+                                return True
+        return False
+    
+    ######################################## SEALED #############################################
+    def seal(self):
+        if self.tokens[self.index][0] == "sealed":
+            self.Cat=self.tokens[self.index][1]
+            self.index += 1
+            return True
+        elif self.tokens[self.index][0] == "class":
+            self.Cat=self.tokens[self.index][1]
+            return True
+        else:
+            return False
+    ################################################ INHERITS ####################################
+    def inherit(self):
+        if (self.tokens[self.index][0] == "extends" ):
+            self.index+=1
+            if( self.tokens[self.index][0] == "ID"):
+                self.N1=self.tokens[self.index][1]
+                self.T=self.semantic_class.lookup_MT(self.N1)
+                if (self.T == "null"):
+                    print("Undeclared: " + self.N1)
+                elif (self.T == "class" and self.Cat == "sealed"):
+                    print("sealed class cannot be inherited")
+                else:
+                    self.Prnt = self.N1
+                    self.index += 1
+            return True
+        
+        elif self.tokens[self.index][1] == "{":
+            return True
+        return False
 
+    def C1(self):
+        if self.tokens[self.index][1] == "}":
+            self.semantic_class.destroyScope()
+            self.index += 1
+            if self.S0():
+                return True
+        elif self.hid_CB():
+            return True
+        return False   
+    def hid_CB(self):
+        if self.tokens[self.index][1] == "public":
+            self.index += 1
+            if self.A1():
+                return True
+        elif self.tokens[self.index][1] == "private":
+            self.index += 1
+            if self.A2():
+                if self.C1():
+                    return True
+        elif self.tokens[self.index][1] == "protected":
+            self.index += 1
+            if self.A2():
+                if self.C1():
+                    return True
+        elif self.A8():
+            if self.C1():
+                return True
+        return False
+
+    def A1(self):
+        if self.tokens[self.index][0] == "static":
+            self.cTm=self.tokens[self.index][1]
+            self.index += 1
+            # if self.A3():
+            #     return True
+        # elif self.tokens[self.index][1] == "final":
+        #     self.index += 1
+        #     if self.A18():
+        #         if self.C1():
+        #             return True
+        elif self.A18():
+            if self.C1():
+                return True
+        return False
+
+    def A2(self):
+        if self.tokens[self.index][0] == "static":
+            self.cTm=self.tokens[self.index][1]
+            self.index += 1
+            if self.A7():
+                return True
+        elif self.tokens[self.index][1] == "virtual" :
+            self.index += 1
+            if self.A18():
+                return True
+        elif self.A18():
+            return True
+        return False
+  
+
+    # def A3(self):
+    #     if self.tokens[self.index][1] == "final":
+    #         self.index += 1
+    #         if self.A18():
+    #             if self.C1():
+    #                 return True
+    #     elif self.A19():
+    #         return True
+    #     return False
+
+    def A19(self):
+        if self.tokens[self.index][0] == "void":
+            self.T=self.tokens[self.index][1]
+            self.index += 1
+            if self.A5():
+                return True
+        elif self.tokens[self.index][0] == "DT":
+            self.T = self.tokens[self.index][1]
+            self.index += 1
+            if self.A20():
+                if self.C1():
+                    return True
+        elif self.tokens[self.index][0] == "ID":
+            self.index += 1
+            if self.A21():
+                if self.C1():
+                    return True
+        return False
+
+    def A5(self):
+        if self.tokens[self.index][0] == "main":
+            self.index += 1
+            if self.A6():
+                return True
+        elif self.A13():
+            if self.C1():
+                return True
+        return False
+    #func
+    def A6(self):
+        if self.tokens[self.index][0] == "(":
+            self.index += 1
+            if self.tokens[self.index][0] == ")":
+                self.index += 1
+                if self.body():
+                    if self.C():
+                        return True
+        return False
+    #virtual func
+    def A7(self):
+        if (self.tokens[self.index][1] == "virtual" or
+        self.tokens[self.index][1] == "override"):
+            self.index += 1
+            if self.A18():
+                return True
+        elif self.A18():
+            return True
+        return False
+    #static and virtual
+    def A8(self):
+        if self.tokens[self.index][0] == "static":
+            self.cTm=self.tokens[self.index][1]
+            self.index += 1
+            if self.A9():
+                return True
+        elif (self.tokens[self.index][1] == "virtual" or
+        self.tokens[self.index][1] == "override"):
+            self.cTm=self.tokens[self.index][1]
+            self.index += 1
+            if self.A18():
+                return True
+        elif self.A4():
+            return True
+        return False
+
+    def A9(self):
+        if (self.tokens[self.index][1] == "virtual" or
+        self.tokens[self.index][1] == "override"):
+            self.cTm=self.tokens[self.index][1]
+            
+            self.index += 1
+            if self.A18():
+                return True
+        elif self.A18():
+            return True
+        return False
+
+    def A4(self):
+        if self.tokens[self.index][0] == "void":
+            self.T=self.tokens[self.index][1]
+            self.index += 1
+            if self.A13():
+                return True
+        elif self.tokens[self.index][0] == "DT":
+            self.T=self.tokens[self.index][1]
+            self.index += 1
+            if self.A10():
+                return True
+        elif self.tokens[self.index][0] == "ID":
+            self.index += 1
+            if self.A14():
+                return True
+        elif self.hid_method():
+            return True
+        return False
+
+    def A10(self):
+        if self.tokens[self.index][0] == "[":
+            self.index += 1
+            if self.tokens[self.index][0] == "]":
+                self.index += 1
+                if self.br():
+                    if self.A11():
+                        return True
+        elif self.tokens[self.index][0] == "ID":
+            self.index += 1
+            if self.A16():
+                return True
+        elif self.A12():
+            return True
+        return False
+
+    def A12(self):
+        if self.hid_method():
+            return True
+        return False
+
+    def A11(self):
+        if self.tokens[self.index][0] == "ID":
+            self.index += 1
+            if self.A15():
+                return True
+        elif self.A12():
+            return True
+        return False
+
+    def A14(self):
+        if self.tokens[self.index][0] == "ID":
+            self.index += 1
+            if self.A17():
+                return True
+        elif self.tokens[self.index][0] == "[":
+            self.index += 1
+            if self.tokens[self.index][0] == "]":
+                self.index += 1
+                if self.br():
+                    if self.A13():
+                        return True
+        elif self.A12():
+            return True
+        return False
+
+    def A15(self):
+        if self.tokens[self.index][0] == "(":
+            self.index += 1
+            if self.param():
+                if self.tokens[self.index][0] == ")":
+                    self.index += 1
+                    if self.body():
+                        return True
+        elif self.Arraydef():
+            if self.tokens[self.index][1] == ";":
+                self.index += 1
+                return True
+        return False
+
+    def A16(self):
+        if self.tokens[self.index][0] == "(":
+            self.index += 1
+            if self.param():
+                if self.tokens[self.index][0] == ")":
+                    if not self.semantic_class.insert_DT(self.cName,self.P+"->"+self.T,self.cTm,self.Am,self.refDt):
+                        self.Dtempty()
+                        print("Function Declaration")
+
+
+                    
+                    self.index += 1
+                    if self.body():
+                        self.semantic_class.destroyScope()
+                        return True
+        elif self.init():
+            if self.list():
+                return True
+        return False
+
+    def A17(self):
+        if self.tokens[self.index][0] == "(":
+            self.index += 1
+            if self.param():
+                if self.tokens[self.index][0] == ")":
+                    self.index += 1
+                    if self.body():
+                        return True
+        elif self.tokens[self.index][1] == "=":
+            self.index += 1
+            if self.tokens[self.index][0] == "new":
+                self.index += 1
+                if self.tokens[self.index][0] == "ID":
+                    self.index += 1
+                    if self.tokens[self.index][0] == "(":
+                        self.index += 1
+                        if self.arg():
+                            if self.tokens[self.index][0] == ")":
+                                self.index += 1
+                                if self.tokens[self.index][1] == ";":
+                                    self.index += 1
+                                    return True
+        return False
+
+    def A13(self):
+        if self.fun2_body():
+            return True
+        return False
+
+    def A18(self):
+        if self.tokens[self.index][0] == "void":
+            self.T=self.tokens[self.index][1]
+            self.index += 1
+            if self.A13():
+                return True
+        elif self.tokens[self.index][0] == "DT":
+            self.T=self.tokens[self.index][1]
+            self.index += 1
+            if self.A20():
+                return True
+        elif self.tokens[self.index][0] == "ID":
+            self.index += 1
+            if self.A21():
+                return True
+        return False
+
+    def A20(self):
+        if self.tokens[self.index][0] == "[":
+            self.index += 1
+            if self.tokens[self.index][0] == "]":
+                self.index += 1
+                if self.br():
+                    if self.A13():
+                        return True
+        elif self.tokens[self.index][0] == "ID":
+            self.cName=self.tokens[self.index][1]
+            self.index += 1
+            if self.A16():
+                return True
+        elif self.A12():
+            return True
+        return False
+
+    def A21(self):
+        if self.tokens[self.index][0] == "[":
+            self.index += 1
+            if self.tokens[self.index][0] == "]":
+                self.index += 1
+                if self.br():
+                    if self.A13():
+                        return True
+   
+ 
+    def C(self):
+        if self.tokens[self.index][0] == "}":
+            self.index += 1
+            if self.S2():
+                return True
+        elif self.HCB():
+            return True
+        return False
+
+    def D1(self):
+        if self.tokens[self.index][0] == "}":
+            self.semantic_class.destroyScope()
+            self.index += 1
+            if self.S0():
+                return True
+        elif self.S_CB():
+            return True
+        return False
+
+    def S_CB(self):
+        if self.tokens[self.index][1] == "public":
+            self.index += 1
+            if self.B1():
+                return True
+        elif self.tokens[self.index][1] == "private":
+            self.index += 1
+            if self.B2():
+                if self.D1():
+                    return True
+        elif self.tokens[self.index][1] == "protected":
+            self.index += 1
+            if self.B2():
+                if self.D1():
+                    return True
+        elif self.B7():
+            if self.D1():
+                return True
+        return False
+
+    def B1(self):
+        if self.tokens[self.index][0] == "static":
+            self.cTm=self.tokens[self.index][1]
+            self.index += 1
+            if self.B3():
+                return True
+        elif (self.tokens[self.index][1] == "virtual" or
+        self.tokens[self.index][1] == "override"):
+            self.cTm=self.tokens[self.index][1]
+            self.index += 1
+            if self.B4():
+                if self.D1():
+                    return True
+        elif self.B4():
+            if self.D1():
+                return True
+        return False
+
+    def B3(self):
+        if (self.tokens[self.index][1] == "virtual" or
+        self.tokens[self.index][1] == "override"):
+            self.cTm=self.tokens[self.index][1]
+            self.index += 1
+            if self.B4():
+                if self.D1():
+                    return True
+        elif self.B13():
+            return True
+        return False
+
+    def B13(self):
+        if self.tokens[self.index][0] == "void":
+            self.T=self.tokens[self.index][1]
+            self.index += 1
+            if self.B5():
+                return True
+        elif self.tokens[self.index][0] == "DT":
+            self.T=self.tokens[self.index][1]
+            self.index += 1
+            if self.B9():
+                if self.D1():
+                    return True
+        elif self.tokens[self.index][0] == "ID":
+            self.index += 1
+            if self.B11():
+                if self.D1():
+                    return True
+        return False
+
+    def B5(self):
+        if self.tokens[self.index][0] == "main":
+            self.index += 1
+            if self.B6():
+                return True
+        elif self.B10():
+            if self.D1():
+                return True
+        return False
+
+    def B6(self):
+        if self.tokens[self.index][0] == "(":
+            self.index += 1
+            if self.tokens[self.index][0] == ")":
+                self.index += 1
+                if self.body():
+                    if self.D():
+                        return True
+        return False
+
+    def B2(self):
+        if self.tokens[self.index][0] == "static":
+            self.cTm=self.tokens[self.index][1]
+            self.index += 1
+            if self.B8():
+                return True
+        elif (self.tokens[self.index][1] == "virtual" or
+        self.tokens[self.index][1] == "override"):
+            self.cTm=self.tokens[self.index][1]
+            self.index += 1
+            if self.B4():
+                return True
+        elif self.B4():
+            return True
+        return False
+
+    def B8(self):
+        if (self.tokens[self.index][1] == "virtual" or
+        self.tokens[self.index][1] == "override"):
+            self.cTm=self.tokens[self.index][1]
+            self.index += 1
+            if self.B4():
+                return True
+        elif self.B4():
+            return True
+        return False
+
+    def B4(self):
+        if self.tokens[self.index][0] == "void":
+            self.T=self.tokens[self.index][1]
+            self.index += 1
+            if self.B10():
+                return True
+        elif self.tokens[self.index][0] == "DT":
+            self.T=self.tokens[self.index][1]
+            self.index += 1
+            if self.B9():
+                return True
+        elif self.tokens[self.index][0] == "ID":
+            self.index += 1
+            if self.B11():
+                return True
+        return False
+
+    def B9(self):
+        if self.tokens[self.index][0] == "[":
+            self.index += 1
+            if self.tokens[self.index][0] == "]":
+                self.index += 1
+                if self.br():
+                    if self.B10():
+                        return True
+        elif self.tokens[self.index][0] == "ID":
+            self.index += 1
+            if self.A16():
+                return True
+        return False
+
+    def B11(self):
+        if self.B10():
+            return True
+        elif self.tokens[self.index][0] == "[":
+            self.index += 1
+            if self.tokens[self.index][0] == "]":
+                self.index += 1
+                if self.br():
+                    if self.B10():
+                        return True
+        return False
+
+    def B12(self):
+        if self.tokens[self.index][0] == "(":
+            self.index += 1
+            if self.param():
+                if self.tokens[self.index][0] == ")":
+                    self.index += 1
+                    if self.body():
+                        return True
+        return False
+
+    def B10(self):
+        if self.fun2_body():
+            return True
+        return False
+
+    def B19(self):
+        if self.B12():
+            return True
+        elif self.tokens[self.index][1] == "=":
+            self.index += 1
+            if self.tokens[self.index][0] == "new":
+                self.index += 1
+                if self.tokens[self.index][0] == "ID":
+                    self.index += 1
+                    if self.tokens[self.index][0] == "(":
+                        self.index += 1
+                        if self.arg():
+                            if self.tokens[self.index][0] == ")":
+                                self.index += 1
+                                if self.tokens[self.index][0] == ";":
+                                    self.index += 1
+                                    return True
+        return False
+
+    def B7(self):
+        if self.tokens[self.index][0] == "static":
+            self.cTm=self.tokens[self.index][1]
+            self.index += 1
+            if self.B14():
+                return True
+        elif (self.tokens[self.index][1] == "virtual" or
+        self.tokens[self.index][1] == "override"):
+            self.cTm=self.tokens[self.index][1]
+            self.index += 1
+            if self.B4():
+                return True
+        elif self.B15():
+            return True
+        return False
+
+    def B14(self):
+        if (self.tokens[self.index][1] == "virtual" or
+        self.tokens[self.index][1] == "override"):
+            self.cTm=self.tokens[self.index][1]
+            self.index += 1
+            if self.B4():
+                return True
+        if self.B4():
+            return True
+        return False
+
+    def B15(self):
+        if self.tokens[self.index][0] == "void":
+            self.T=self.tokens[self.index][1]
+            self.index += 1
+            if self.B10():
+                return True
+        elif self.tokens[self.index][0] == "DT":
+            self.T=self.tokens[self.index][1]
+            self.index += 1
+            if self.B16():
+                return True
+        elif self.tokens[self.index][0] == "ID":
+            self.index += 1
+            if self.B17():
+                return True
+        return False
+
+    def B16(self):
+        if self.tokens[self.index][0] == "[":
+            self.index += 1
+            if self.tokens[self.index][0] == "]":
+                self.index += 1
+                if self.br():
+                    if self.B18():
+                        return True
+        elif self.tokens[self.index][0] == "ID":
+            self.index += 1
+            if self.A16():
+                return True
+        return False
+
+    def B18(self):
+        if self.tokens[self.index][0] == "ID":
+            self.index += 1
+            if self.A15():
+                return True
+        return False
+
+    def B17(self):
+        if self.tokens[self.index][0] == "[":
+            self.index += 1
+            if self.tokens[self.index][0] == "]":
+                self.index += 1
+                if self.br():
+                    if self.B10():
+                        return True
+        elif self.tokens[self.index][0] == "ID":
+            self.index += 1
+            if self.B19():
+                return True
+        elif self.B12():
+            return True
+        return False
+   
+
+    def S1(self):
+        if self.tokens[self.index][0] == "abstract":
+            self.index += 1
+            if self.tokens[self.index][0] == "class":
+                self.index += 1
+                if self.tokens[self.index][0] == "ID":
+                    self.index += 1
+                    if self.inherit():
+                        if self.tokens[self.index][0] == "{":
+                            self.index += 1
+                            if self.C():
+                                return True
+        elif self.seal():
+            if self.tokens[self.index][0] == "class":
+                self.index += 1
+                if self.tokens[self.index][0] == "ID":
+                    self.index += 1
+                    if self.inherit():
+                        if self.tokens[self.index][0] == "{":
+                            self.index += 1
+                            if self.D():
+                                return True
+        elif self.tokens[self.index][0] == "class":
+            self.index += 1
+            if self.tokens[self.index][0] == "ID":
+                self.index += 1
+                if self.inherit():
+                    if self.tokens[self.index][0] == "{":
+                        self.index += 1
+                        if self.D():
+                            return True
+        return False
+
+    def S2(self):
+        if self.S1():
+            return True
+        elif self.tokens[self.index][0] == "$":
+            return True
+        return False
+
+    def D(self):
+        if self.tokens[self.index][0] == "}":
+            self.index += 1
+            if self.S2():
+                return True
+        elif self.CB():
+            return True
+        return False
+
+    def HCB(self):
+        if self.tokens[self.index][1] == "public":
+            self.index += 1
+            if self.A2():
+                if self.C():
+                    return True
+        elif self.tokens[self.index][1] == "private":
+            self.index += 1
+            if self.A2():
+                if self.C():
+                    return True
+        elif self.tokens[self.index][1] == "protected":
+            self.index += 1
+            if self.A2():
+                if self.C():
+                    return True
+        elif self.A8():
+            if self.C():
+                return True
+        return False
+
+    def CB(self):
+        if self.tokens[self.index][1] == "public":
+            self.index += 1
+            if self.B2():
+                if self.D():
+                    return True
+        elif self.tokens[self.index][1] == "private":
+            self.index += 1
+            if self.B2():
+                if self.D():
+                    return True
+        elif self.tokens[self.index][1] == "protected":
+            self.index += 1
+            if self.B2():
+                if self.D():
+                    return True
+        elif self.B7():
+            if self.D():
+                return True
+        return False
+
+ ########################################### ENUM ######################################################
+    
+    def enum(self):
+        if self.tokens[self.index][0] == "enum" and self.tokens[self.index+1][0]=="ID" and self.tokens[self.index+2][1]=="{":
+            self.index+=3
+            if self.E_B():
+                    
+                    
+             
+                    return True
+     
+
+
+
+        return False
+    def E_B(self):
+        if self.tokens[self.index][0]=="ID" and self.tokens[self.index+1][1]=="}":
+            self.index+=2
+            return True
+        elif self.tokens[self.index][0]=="ID" and self.tokens[self.index+1][1]==",":
+            self.index+=2
+            if self.E_B():
+                return True
+      
+        return False
+    def enum_call(self):
+        if self.tokens[self.index][0] == "ID":
+            self.index += 1
+            if self.tokens[self.index][0] == "ID":
+                self.index += 1
+                if self.tokens[self.index][1] == "=":
+                    self.index += 1
+                    if self.tokens[self.index][0] == "ID":
+                        self.index += 1
+                        if self.tokens[self.index][1] == ".":
+                            self.index += 1
+                            if self.tokens[self.index][0] == "ID":
+                                self.index += 1
+                                if self.tokens[self.index][1] == ";":
+                                    self.index += 1
+                                    return True
+        return False
     ######################################### FUNCTION #########################################
     def Function(self):
       
         if self.tokens[self.index][1] == "(":
             self.index += 1
+            self.semantic_class.createScope()
             if self.param():
                 if self.tokens[self.index][1] == ")":
                     self.index += 1
                     if self.body():
+                        self.semantic_class.destroyScope()
                         return True
         return False
     
@@ -1875,14 +2797,24 @@ class SyntaxPhase:
 
 
     ##############STARTING###########
-   
-
     def S(self):
+            if self.class_state():
+                return True
+            elif self.SST():
+                return True
+           
+            elif self.enum():
+                return True
+          
+            return False
+
+    def S0(self):
             while self.tokens[self.index][0] != "$":
-                if not(self.SST()):
+                if not(self.S()):
                    return False
                 
             return True
+
 
 
 
@@ -1917,6 +2849,10 @@ syntax_phase = SyntaxPhase(tokens)
 syntax_phase.run()
 
     
+
+             
+       
+   
 
              
        
