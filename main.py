@@ -8,7 +8,7 @@ if __name__ == '__main__':
     # Define the regular expressions for tokens
     Tokenizer.define_tokens()
 
-    file_path = "D:/6 semester/compiler construction/assignment/khadija/LA+Syntax 2/LA+Syntax/input.txt"  # Replace with the actual absolute path to the file
+    file_path = "C:\\Users\\Lenovo Admin\\Desktop\\Nabiha\\syntax-analyzer\\input.txt"  # Replace with the actual absolute path to the file
     if os.path.exists(file_path):
         with open(file_path) as file_handler:
             t = Tokenizer(file_handler)

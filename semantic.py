@@ -944,7 +944,7 @@ class SyntaxPhase:
             self.index += 1
             if self.dec2():
                 self.semantic_class.insert_FT(self.N,self.T)
-                
+                self.N = None
                 
                 return True
             elif self.Function():
