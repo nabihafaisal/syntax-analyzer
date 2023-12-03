@@ -145,7 +145,7 @@ class SyntaxPhase:
                     return True        
             
             if self.tokens[self.index][0] == "class":
-                if self.class_body():
+                if self.ClassBody():
                     return True
 
 
@@ -273,73 +273,227 @@ class SyntaxPhase:
             return True
         return False
     #------------------------------------ class body------------------------------------------
-    def class_body(self):
-        if self.tokens[self.index][0] =='class':
-            self.index += 1
-            if self.tokens[self.index][0] =='ID':
-                self.index += 1
-                if self.tokens[self.index][0] =='{':
-                    self.index += 1
+    # def class_body(self):
+    #     if self.tokens[self.index][0] =='class':
+    #         self.index += 1
+    #         if self.tokens[self.index][0] =='ID':
+    #             self.index += 1
+    #             if self.tokens[self.index][0] =='{':
+    #                 self.index += 1
                 
-                    if self.class_body ():
-                        return True
+    #                 if self.class_body ():
+    #                     return True
                         
-                    if self.tokens[self.index][0] =='}':
-                        self.index += 1
-                        return True
+    #                 if self.tokens[self.index][0] =='}':
+    #                     self.index += 1
+    #                     return True
     
-    def mode_inheritance(self):
-        if self.tokens[self.index][0] == "class":
-            self.index += 1
-            if self.tokens[self.index][0] == "ID":
-                self.index += 1
-                if self.tokens[self.index][1] == ":":
-                    self.index += 1
-                    if self.access_modifier():
-                        if self.tokens[self.index][0] == "ID":
-                            self.index += 1
-                            if self.tokens[self.index][1] == "{":
-                                self.index += 1
-                                if self.class_body():
-                                    if self.tokens[self.index][1] == "}":
-                                        self.index += 1
-                                        if self.tokens[self.index][1] == ";":
-                                            self.index += 1
-                                            return True
-        return False
+    # def mode_inheritance(self):
+    #     if self.tokens[self.index][0] == "class":
+    #         self.index += 1
+    #         if self.tokens[self.index][0] == "ID":
+    #             self.index += 1
+    #             if self.tokens[self.index][1] == ":":
+    #                 self.index += 1
+    #                 if self.access_modifier():
+    #                     if self.tokens[self.index][0] == "ID":
+    #                         self.index += 1
+    #                         if self.tokens[self.index][1] == "{":
+    #                             self.index += 1
+    #                             if self.class_body():
+    #                                 if self.tokens[self.index][1] == "}":
+    #                                     self.index += 1
+    #                                     if self.tokens[self.index][1] == ";":
+    #                                         self.index += 1
+    #                                         return True
+    #     return False
 
         
-    def access_modifier(self):
-        if self.tokens[self.index][0] in ["public", "private", "protected"]:
-            self.index += 1
-            if self.tokens[self.index][1] == ":":
-                self.index += 1
-            return True
-        return False
-    def class_body(self):
+    # def access_modifier(self):
+    #     if self.tokens[self.index][0] in ["public", "private", "protected"]:
+    #         self.index += 1
+    #         if self.tokens[self.index][1] == ":":
+    #             self.index += 1
+    #         return True
+    #     return False
+    # def class_body(self):
         
-        if self.dec():
-            if self.class_body():
-                   return True
-        elif self.access_modifier():
-            if self.dec():
-                if self.class_modifier():
-                    if self.class_body():
-                        return True            
+    #     if self.dec():
+    #         if self.class_body():
+    #                return True
+    #     elif self.access_modifier():
+    #         if self.dec():
+    #             if self.class_modifier():
+    #                 if self.class_body():
+    #                     return True            
             
-        elif self.SST():
-            if self.class_body():
-                   return True              
+    #     elif self.SST():
+    #         if self.class_body():
+    #                return True              
 
 
 
-        return False   
+    #     return False   
 
-    def class_modifier(self):
-        if self.tokens[self.index][0] in ["static", "virtual", "const"]:
-            self.index += 1
+    # def class_modifier(self):
+    #     if self.tokens[self.index][0] in ["static", "virtual", "const"]:
+    #         self.index += 1
+    #         return True
+    #     return False
+
+    def _Class(self):
+        if (self.C_T()):
+            if (self.tokens[self.index][0] == "Class"):
+                # self._T = "Class"
+                # self.currentStatement.append("CLASS")
+                self.index += 1
+                if (self.Class == "ID"):
+                    # self.N = self.tokens[self.index][0]
+                    # self.currentRef.append(self.tokens[self.index][0])
+                    self.index += 1
+                    
+                    if (self.inh()):
+                        # self.semantic.insert_DT(self.N, self._T, self._CM, self._P)
+                        # self.clear_semantics_variables()
+                        if (self.tokens[self.index][1] == "{"):
+                            self.index += 1
+                            if (self.ClassBodyMain()):
+                                if (self.tokens[self.index][1] == "}"):
+                                    # self.currentStatement.pop()
+                                    # self.currentRef.pop()
+                                    self.index += 1
+                                    return True
+        return False
+
+    def C_T(self):
+        if (self.tokens[self.index][0] == "Class"):
+            return True
+        if (self.tokens[self.index][0] == "sealed" or self.tokens[self.index][0] == "abstract"):
+            
             return True
         return False
+
+    def inh(self):
+        if (self.tokens[self.index][1] == "{"):
+            return True
+
+        if (self.tokens[self.index][1] == ":"):
+            self.index += 1
+            if (self.Class == "ID"):
+                # if self.currentStatement[-1] == "CLASS":
+                #     self.semantic.check_parent_class(self.tokens[self.index][0])
+                # elif self.currentStatement[-1] == "INTERFACE":
+                #     self.semantic.check_parent_interface(self.tokens[self.index][0])
+                # self.add_parent(self.tokens[self.index][0])
+                # self.index += 1
+                return self.InhList()
+        return False
+
+    def InhList(self):
+        if (self.tokens[self.index][1] == "{"):
+            return True
+
+        if (self.tokens[self.index][1] == ","):
+            self.index += 1
+            if (self.Class == "ID"):
+                # self.semantic.check_parent_interface(self.tokens[self.index][0])
+                # self.add_parent(self.tokens[self.index][0])
+                # self.index += 1
+                return self.InhList()
+
+    def ClassBodyMain(self):
+        if (self.tokens[self.index][1] == "}"):
+            return True
+        if (self.ClassBody()):
+            if (self.ClassBodyMain()):
+                return True
+        return False
+
+    def ClassBody(self):
+        if (self.tokens[self.index][1] == "}"):
+            return True
+        if (self.Constructor()):
+            return True
+        if (self.ClassFuncDecl_LF()):
+            return True
+        return False
+
+    def ClassFuncDecl_LF(self):
+        if (self.Mod()):
+            if (self.FunDec()):
+                return True
+        return False
+
+    def Mod(self):
+        if (self.tokens[self.index][0] in ["public", "private"]):
+            # self._AM = self.tokens[self.index][0]
+            # self.index += 1
+            return True
+        return False
+
+    def FunDec(self):
+        if (self.ClassFunc()):
+            return True
+        if (self.Cdecl()):
+            return True
+        return False
+
+    def Cdecl(self):
+        if (self.Class == "ID"):
+            # self.N = self.tokens[self.index][0]
+            # self.index += 1
+            if (self.DeclLF()):
+                return True
+        return False
+
+    def ClassFunc(self):
+        if (self.Ts()):
+            if (self.FuncLF()):
+                return True
+        return False
+
+    def Ts(self):
+        if (self.tokens[self.index][0] == "@defs"):
+            return True
+        if (self.tokens[self.index][0] in ["override", "virtual", "static"]):
+            # self._TM = self.tokens[self.index][0]
+            self.index += 1
+            return True
+
+    def Constructor(self):
+        if (self._Class == "ID"):
+            self.index += 1
+            if (self.tokens[self.index][1] == "("):
+                self.index += 1
+                if (self.FuncParams()):
+                    if (self.tokens[self.index][1] == ")"):
+                        self.index += 1
+                        if (self.ParentC()):
+                            if (self.tokens[self.index][1] == "{"):
+                                self.index += 1
+                                if (self.MST()):
+                                    if (self.tokens[self.index][1] == "}"):
+                                        self.index += 1
+                                        return True
+        return False
+
+    def ParentC(self):
+        if (self.tokens[self.index][1] == "{"):
+            return True
+        if (self.tokens[self.index][1] == ":"):
+            self.index += 1
+            if (self.tokens[self.index][0] == "super"):
+                self.index += 1
+                if (self.tokens[self.index][1] == "("):
+                    self.index += 1
+                    if (self.FuncParams()):
+                        if (self.tokens[self.index][1] == ")"):
+                            self.index += 1
+                            return True
+        return False
+
+########################### - Class -#########################################
+
     # RETURN
 
     def return_state(self):
@@ -1099,4 +1253,3 @@ class SyntaxPhase:
                 return False
 
         return True
-
