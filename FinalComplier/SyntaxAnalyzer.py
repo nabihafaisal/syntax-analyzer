@@ -1,4 +1,5 @@
 from Semantic import SemanticClass
+from prettytable import PrettyTable
 
 #########################SYNTAX ANALYZER###########################
 
@@ -54,8 +55,6 @@ class SyntaxPhase:
             print(f"  :(   Syntax Error At Line No.: {self.tokens[self.index][2]} {self.tokens[self.index][1]}")
             print(self.semantic_class.mainTable)
             print(self.semantic_class.functionTable)
-       
-   
     def format_function_table(self):
         table = PrettyTable()
         table.field_names = ["Name", "Type", "Scope"]
@@ -77,12 +76,15 @@ class SyntaxPhase:
 
     def format_body_table(self, link):
         table = PrettyTable()
-        table.field_names = ["Name", "Type", "Access Modifier", "Type Modifier"]
+        table.field_names = ["Name", "Type", "Access Modifier", "Type Modifier","link"]
 
         for entry in link:
-            table.add_row([entry["name"], entry["type"], entry["access_modifier"], entry["type_modifier"]])
+            table.add_row([entry["name"], entry["type"], entry["access_modifier"], entry["type_modifier"]],entry ["link"])
+        
 
         self.formated_function.append(str(table))     
+       
+   
     #####################################DECLARATION############################
     # def dec(self):
     #     if (
@@ -886,25 +888,27 @@ class SyntaxPhase:
         if self.tokens[self.index][0] == "INTEGER":
             self.index += 1
             self.T1="int"
-            return True
+            return self.T1
         elif self.tokens[self.index][0] == "FLOAT":
             self.index += 1
             self.T1="float"
-            return True
+            return self.T1
         elif self.tokens[self.index][0] == "BOOLEAN":
             self.index += 1
             self.T1="bool"
-            return True
+            return self.T1
         elif self.tokens[self.index][0] == "CHARACTER":
             self.index += 1
             self.T1="character"
+            return self.T1
         elif self.tokens[self.index][0] == "STRING":
             self.index += 1
             self.T1="string"
+            return self.T1
        
        
         
-            return True
+            
         return False
     def OE(self):
         if not self.AE():
@@ -916,7 +920,7 @@ class SyntaxPhase:
     def OE_prime(self):
         if self.tokens[self.index][0] == 'or':
             self.opr=self.tokens[self.index][0]
-            self.T1="bool"
+           
             self.index += 1
             if not self.AE():
                 return False
@@ -935,7 +939,7 @@ class SyntaxPhase:
     def AE_prime(self):
         if self.tokens[self.index][0] == 'and':
             self.opr=self.tokens[self.index][0]
-            self.T1="bool"
+            
             self.index += 1
             if not self.RE():
                 return False
@@ -954,7 +958,7 @@ class SyntaxPhase:
     def RE_prime(self):
         if self.tokens[self.index][0] == 'ROP':
             self.opr=self.tokens[self.index][1]
-            self.T1="bool"
+           
             self.index += 1
             if not self.E():
                 return False
@@ -973,7 +977,7 @@ class SyntaxPhase:
     def E_prime(self):
         if (self.tokens[self.index][0] in ('PM') or self.tokens[self.index][1]=='='):
             self.opr=self.tokens[self.index][1]
-            self.T2=self.semantic_class.compatibility(self.T,self.T1,self.opr)
+            self.T2=self.semantic_class.Compare(self.T,self.T1,self.opr)
           
             self.index += 1
             if not self.TI():
@@ -994,7 +998,7 @@ class SyntaxPhase:
         if self.tokens[self.index][0] == 'MDM':
             self.opr=self.tokens[self.index][1]
             self.index += 1
-            self.T2=self.semantic_class.compatibility(self.T,self.T1,self.opr)
+            self.T2=self.semantic_class.Compare(self.T,self.T1,self.opr)
             if not self.F():
                 return False
             if not self.T_prime():
@@ -1138,6 +1142,8 @@ class SyntaxPhase:
                     self.index += 1
                     if self.inherit():
                         self.refDt=self.semantic_class.create_DT()
+                        self.semantic_class.add_default_constructor(self.N,self.refDt)
+                        
                         self.semantic_class.insert_MT(self.N,self.T,self.Am,self.Cat,self.Prnt,self.refDt)
                         if self.tokens[self.index][0] == "{":
                             self.semantic_class.createScope()
@@ -1153,6 +1159,7 @@ class SyntaxPhase:
                     self.index += 1
                     if self.inherit():
                         self.refDt=self.semantic_class.create_DT()
+                        self.semantic_class.add_default_constructor(self.N,self.refDt)
                         self.semantic_class.insert_MT(self.N,self.T,self.Am,self.Cat,self.Prnt,self.refDt)
                        
                         if self.tokens[self.index][1] == "{":
@@ -1169,7 +1176,7 @@ class SyntaxPhase:
             self.index += 1
             return True
         elif self.tokens[self.index][0] == "class":
-            self.Cat=self.tokens[self.index][1]
+            self.T=self.tokens[self.index][1]
             return True
         else:
             return False
