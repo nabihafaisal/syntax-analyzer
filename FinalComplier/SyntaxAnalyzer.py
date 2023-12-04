@@ -56,6 +56,33 @@ class SyntaxPhase:
             print(self.semantic_class.functionTable)
        
    
+    def format_function_table(self):
+        table = PrettyTable()
+        table.field_names = ["Name", "Type", "Scope"]
+
+        for entry in self.semantic_class.functionTable:
+            table.add_row([entry["name"], entry["type"], entry["scope"]])
+
+        self.formated_function.append(str(table))      
+
+    def format_class_table(self):
+        table = PrettyTable()
+        table.field_names = ["Name", "Type", "Access Modifier", "Category", "Parent", "Link"]
+
+        for entry in self.semantic_class.mainTable:
+            table.add_row([entry["name"], entry["type"], entry["access_modifier"],
+                           entry["category"], entry["parent"], entry["link"]])
+
+        self.formated_function.append(str(table))
+
+    def format_body_table(self, link):
+        table = PrettyTable()
+        table.field_names = ["Name", "Type", "Access Modifier", "Type Modifier"]
+
+        for entry in link:
+            table.add_row([entry["name"], entry["type"], entry["access_modifier"], entry["type_modifier"]])
+
+        self.formated_function.append(str(table))     
     #####################################DECLARATION############################
     # def dec(self):
     #     if (
