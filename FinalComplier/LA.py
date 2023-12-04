@@ -458,17 +458,6 @@ class Tokenizer:
 
 
 
-# if __name__ == '__main__':
-#     # Define the regular expressions for tokens
-#     Tokenizer.define_tokens()
-
-#     with open('tokens.txt') as file_handler:
-#         t = Tokenizer(file_handler)
-#         tokens=t.tokenize_input()
-#         for token_name, token, start_line_num in tokens:
-#                print(f"({token_name}, {token} , {start_line_num})\n")
-# syntax_phase = SyntaxPhase(tokens)
-# syntax_phase.run()
 if __name__ == '__main__':
     # Define the regular OEressions for tokens
     Tokenizer.define_tokens()
@@ -479,27 +468,24 @@ if __name__ == '__main__':
         for token_name, token, start_line_num in tokens:
                print(f"({token_name}, {token} , {start_line_num})\n")
 syntax_phase = SyntaxPhase(tokens)
+some_link = syntax_phase.semantic_class.create_DT()
 syntax_phase.run()
 
     
 
 syntax_phase.format_function_table()
 syntax_phase.format_class_table()
-#syntax_phase.format_body_table(link) 
+syntax_phase.format_body_table(some_link) 
 
 # Display the formatted function table
 print("Function Table:")
 print(syntax_phase.formated_function[0])          
 
+
 print("Class Table:")
 print(syntax_phase.formated_function[1])
 
-#print("Body Table:")
-#print(syntax_phase.formated_function[2])   
-       
-
-    
-
-             
+print("Body Table:")
+print(syntax_phase.formated_function[2])   
        
    
