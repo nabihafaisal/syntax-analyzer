@@ -459,7 +459,7 @@ class Tokenizer:
 
 
 if __name__ == '__main__':
-    # Define the regular expressions for tokens
+    # Define the regular OEressions for tokens
     Tokenizer.define_tokens()
 
     with open('tokens.txt') as file_handler:
@@ -472,6 +472,19 @@ syntax_phase.run()
 
     
 
-             
+syntax_phase.format_function_table()
+syntax_phase.format_class_table()
+syntax_phase.format_body_table(some_link) 
+
+# Display the formatted function table
+print("Function Table:")
+print(syntax_phase.formated_function[0])          
+print("Function Table:")
+
+print("Class Table:")
+print(syntax_phase.formated_function[1])
+
+print("Body Table:")
+print(syntax_phase.formated_function[2])   
        
    
