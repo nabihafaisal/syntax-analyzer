@@ -1,6 +1,5 @@
 from Semantic import SemanticClass
 from prettytable import PrettyTable
-
 #########################SYNTAX ANALYZER###########################
 
 class SyntaxPhase:
@@ -69,8 +68,10 @@ class SyntaxPhase:
         table.field_names = ["Name", "Type", "Access Modifier", "Category", "Parent", "Link"]
 
         for entry in self.semantic_class.mainTable:
+            # Adjusted to display the link information in a more readable format
+            link_info = ", ".join([f"{item['name']}:{item['type']}" for item in entry["link"]])
             table.add_row([entry["name"], entry["type"], entry["access_modifier"],
-                           entry["category"], entry["parent"], entry["link"]])
+                        entry["category"], entry["parent"], link_info])
 
         self.formated_function.append(str(table))
 
@@ -79,12 +80,9 @@ class SyntaxPhase:
         table.field_names = ["Name", "Type", "Access Modifier", "Type Modifier","link"]
 
         for entry in link:
-            table.add_row([entry["name"], entry["type"], entry["access_modifier"], entry["type_modifier"]],entry ["link"])
-        
+            table.add_row([entry["name"], entry["type"], entry["access_modifier"], entry["type_modifier"]])
 
         self.formated_function.append(str(table))     
-       
-   
     #####################################DECLARATION############################
     # def dec(self):
     #     if (
@@ -301,14 +299,19 @@ class SyntaxPhase:
     def SST2(self):
         if self.tokens[self.index][0] == "ID":
             self.N=self.tokens[self.index][1]
-            if(self.N!=None and self.T!=None):
-                self.semantic_class.insert_FT(self.N,self.T)
-                self.N=None
+            # if(self.N!=None and self.T!=None):
+            #     self.semantic_class.insert_FT(self.N,self.T)
+            #     self.N=None
            
             
             self.index += 1
            
             if self.dec2():
+                if(self.N!=None and self.T!=None):
+                    self.semantic_class.insert_FT(self.N,self.T)
+                    self.N=None
+            
+            
                
 
               
@@ -759,129 +762,6 @@ class SyntaxPhase:
     
      ################################################# OE ####################################
 
-    # def Exp(self):
-    #     # print("Exp")
-    #     #self.exp.append({"T":"","T1":"","T2":"","OP":""})
-    #     if (self.AE()):
-    #         if (self.OE()):
-    #             #self.evaluatedType = self.exp.pop()["T"]
-    #             return True
-    #     return False
-
-    # def AE(self):
-    #     # print("AE")
-    #     if (self.RE()):
-    #         if (self.AE_()):
-    #             return True
-    #     return False
-
-    # def OE(self):
-    #     # print("OE")
-    #     # if (self.tokens[self.index][1] in ";,)]"):
-    #     #     return True
-    #     if (self.tokens[self.index][1] == "&&"):
-    #         self.index+=1
-    #         if (self.AE()):
-    #             if (self.OE()):
-    #                 return True
-    #     return False
-
-    # def AE_(self):
-    #     # print("AE_")
-    #     if (self.tokens[self.index][1] == "&&"):
-    #         return True
-    #     if (self.tokens[self.index][1] == "||"):
-    #         self.index+=1
-    #         if (self.RE()):
-    #             if (self.AE_()):
-    #                 return True
-    #     return False
-
-    # def RE(self):
-    #     # print("RE")
-    #     if (self.E()):
-    #         if (self.RE_()):
-    #             return True
-    #     return False
-
-    # def RE_(self):
-    #     # print("RE_")
-    #     if (self.tokens[self.index][1] == "||" or self.tokens[self.index][1] == "&&"):
-    #         return True
-    #     if (self.tokens[self.index][1] [">=", "<=", "==", ">", "<", "!="]):
-    #         self.opr=self.tokens[self.index][1]
-    #         self.index+=1
-    #         if (self.E()):
-    #             if (self.RE_()):
-    #                 return True
-    #     return False
-
-    # def E(self):
-    #     # print("E")
-    #     if (self.TI()):
-    #         if (self.E_()):
-    #             return True
-    #     return False
-
-    # def E_(self):
-    #     # print("E_")
-    #     if (self.tokens[self.index][1] in [">=", "<=", "==", ">", "<", "!="] or self.tokens[self.index][1] == "||" or self.tokens[self.index][1] == "&&"):
-    #         return True
-    #     if (self.tokens[self.index][1] in "+-"):
-    #         self.opr=self.tokens[self.index][1]
-    #         self.index+=1
-    #         if (self.TI()):
-    #             if (self.E_()):
-    #                 return True
-    #     return False
-
-    # def TI(self):
-    #     # print("T")
-    #     if (self.F()):
-    #         if (self.T_()):
-    #             return True
-    #     return False
-
-    # def T_(self):
-    #     # print("T_")
-    #     if (self.tokens[self.index][1] in "+-" or self.tokens[self.index][1] in [">=", "<=", "==", ">", "<", "!="] or self.tokens[self.index][1] == "||" or self.tokens[self.index][1] == "&&"):
-    #         return True
-    #     if (self.tokens[self.index][1] in "*/"):
-    #         self.tokens[self.index][1]
-    #         self.index+=1
-    #         if (self.F()):
-    #             if (self.T_()):
-    #                 return True
-    #     return False
-
-    # def F(self):
-    #     # print("F")
-    #     return self.Vals()
-
-    # def Vals(self):
-    #     # print("Vals")
-    #     if (self.constant()):
-    #         #self.compare()
-    #         self.index+=1
-    #         return True
-    #     # if (self.arr()):
-    #     #     return True
-    #     # if (self.FuncVarLF()):
-    #     #     # self.advance()
-    #     #     return True
-    #     if (self.obj2()):
-    #         return True
-    #     if (self.tokens[self.index][1]=="("):
-    #         self.index+=1
-    #         if (self.Exp()):
-    #             if (self.tokens[self.index][1] == ")"):
-    #                # self.compare()
-    #                 self.index+=1
-    #                 return True
-    #     if (self.tokens[self.index][1] == "!"):
-    #         self.index+=1
-    #         return self.Vals()
-    #     return False
 
 
     def constant(self):
