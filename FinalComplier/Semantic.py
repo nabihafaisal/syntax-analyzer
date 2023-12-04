@@ -86,8 +86,15 @@ class SemanticClass:
         self.scope = []
         self.mainTable = []
         self.functionTable = []
+    
+  
+
+
 
     def create_DT(self):
+        
+        
+        
         return []
 
     def insert_MT(self, name, type, access_modifier, category, parent, link):
@@ -107,22 +114,35 @@ class SemanticClass:
         else:
             print(f"Redeclaration {maintable['type']}:{maintable['name']}")
             return False
+    def add_default_constructor(self,name,link):
+        default_constructor = {
+            'name': name,
+            'type': 'void',
+            'type_modifier': None,
+            'access_modifier': 'public',
+            'link': link
+        }
+        link.append(default_constructor)
 
     def insert_DT(self, name, type, typemodifier, accessmodifier, link):
-        bodyTable = {
+    
+      
+
+        BodyTable = {
             'name': name,
             'type': type,
             'type_modifier': typemodifier,
             'access_modifier': accessmodifier,
-            'link': link
+            'link':link
+           
 
         }
-        if bodyTable not in link:
-            link.append(bodyTable)
+        if BodyTable not in link:
+            link.append(BodyTable)
          
             return True
         else:
-            print(f"Variable '{bodyTable['name']}' is already defined in this scope")
+            print(f"Variable '{BodyTable['name']}' is already defined in this scope")
             return False
 
     def insert_FT(self, name, type):
@@ -176,35 +196,50 @@ class SemanticClass:
             if var['name'] == name:
                 return var['type']
         return "null"
+    def Compare(self,T1,T2,OP):
+      
+        print("compared")
+        if(OP in ["+", "-", "/", "%", "*","^", "&&", "||"]):
+            if(T1 == T2 and T1 == "string" and OP == "+"):
+                return {"T":T1}
+            if(T1 == T2 and T1 == "int"):
+                return {"T":T1}
+            else:
+                print("Type Mismatched")
+        if(OP in ["<", ">", "!", ">=", "<=", "==", "!="]):
+            if(T1 == T2 ):
+                return {"T":"bool"}
+            else:
+                print("Type Mismatched")
 
-    def compatibility(self,T1, T2, opr):
-        if T1 == "int" and T2 == "int":
-            if opr == "*" or opr == "/" or opr == "+" or opr == "-":
-                return "int"
+    # def compatibility(self,T1, T2, opr):
+    #     if T1 == "int" and T2 == "int":
+    #         if opr == "*" or opr == "/" or opr == "+" or opr == "-":
+    #             return "int"
 
-        if (T1 == "int" and T2 == "float") or (T2 == "int" and T1 == "float"):
-            if opr == "*" or opr == "/" or opr == "-" or opr == "+":
-                return "float"
+    #     if (T1 == "int" and T2 == "float") or (T2 == "int" and T1 == "float"):
+    #         if opr == "*" or opr == "/" or opr == "-" or opr == "+":
+    #             return "float"
 
-        if T1 == "string" and T2 == "string":
-            if opr == "+":
-                return "string"
+    #     if T1 == "string" and T2 == "string":
+    #         if opr == "+":
+    #             return "string"
 
-        if T1 == "character" and T2 == "character":
-            if opr == "+":
-                return "Alpha"
+    #     if T1 == "character" and T2 == "character":
+    #         if opr == "+":
+    #             return "Alpha"
 
-        if (T1 == "string" and T2 == "character") or (T2 == "string" and T1 == "character"):
-            if opr == "+":
-                return "string"
+    #     if (T1 == "string" and T2 == "character") or (T2 == "string" and T1 == "character"):
+    #         if opr == "+":
+    #             return "string"
 
-        if opr == "or" or opr == "and":
-            return "bool"
+    #     if opr == "or" or opr == "and":
+    #         return "bool"
 
-        if opr == "==" or opr == "!=" or opr == ">=" or opr == "<=" or opr == "<" or opr == ">":
-            return "bool"
+    #     if opr == "==" or opr == "!=" or opr == ">=" or opr == "<=" or opr == "<" or opr == ">":
+    #         return "bool"
 
-        return "type mismatched"
+    #     return "type mismatched"
 
 
     def compatibility1(self):
