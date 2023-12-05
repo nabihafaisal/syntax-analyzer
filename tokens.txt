@@ -1,24 +1,2 @@
-int a=10;
 
-while(1){
-
-  
-}
-for A in range (4):{
- 
-}
-
-if(4){
-  int c=5;
-}
-else{
-  float d=10.0;
-}
-void abc(int g,int h ){
-  int q=10;
-}
-int [][]A = new int[5];
-
-
-
-
+string b = '5' + "5 + (8-8)";

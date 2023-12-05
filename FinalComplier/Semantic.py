@@ -95,7 +95,26 @@ class SemanticClass:
         self.link=0
         
      
-       
+    
+########################### COMPARSION #########################################
+    def Compare(self,T1,T2,OP):
+        T1 = self.formatType(T1)
+        T2 = self.formatType(T2)
+        print("compared")
+        if(OP in ["+", "-", "/", "%", "*","^", "&&", "||"]):
+            if(T1 == T2 and (T1 == "str" or T1[len(T1)-2:] == "[]") and OP == "+"):
+                return {"T":T1}
+            elif(T1 == T2 and T1 == "num"):
+                return {"T":T1}
+            else:
+                raise TypeError(f"Type Mismatched {T1} and {T2}\nOperator '{OP}' cannot be applied to {T1} and {T2}")
+        if(OP in ["<", ">", "!", ">=", "<=", "==", "!="]):
+            if(T1 == T2 ):
+                return {"T":"Bool"}
+            else:
+                raise TypeError(f"Type Mismatched {T1} and {T2}")
+########################### COMPARSION #########################################
+   
     
   
 
@@ -240,12 +259,12 @@ class SemanticClass:
             if(T1 == T2 and T1 == "int"):
                 return {"T":T1}
             else:
-                print("Type Mismatched")
+                raise TypeError(f"Type Mismatched {T1} and {T2}")
         if(OP in ["<", ">", "!", ">=", "<=", "==", "!="]):
             if(T1 == T2 ):
                 return {"T":"bool"}
             else:
-                print("Type Mismatched")
+                raise TypeError(f"Type Mismatched {T1} and {T2}")
 
     # def compatibility(self,T1, T2, opr):
     #     if T1 == "int" and T2 == "int":

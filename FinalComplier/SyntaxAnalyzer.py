@@ -29,7 +29,23 @@ class SyntaxPhase:
         self.tokens = tokens
         self.index = 0
         self.formated_function=[]
-       
+        #########################################TYPECHECKING################################################       
+        self._exp_ = []#{"T":"","T1":"","T2":"","OP":""}]
+        self._evaluatedType_ = None
+        #########################################TYPECHECKING################################################       
+
+    def compare(self):
+        # try:
+        if(len(self._exp_)>0):
+            if(self._exp_[-1]["T"] != ""):
+                if(self._evaluatedType_ == None):
+                    var = self.semantic_class.Compare(self._exp_[-1]["T"],self.Class,self._exp_[-1]["OP"])
+                else:
+                    var = self.semantic_class.Compare(self._exp_[-1]["T"],self._evaluatedType_,self._exp_[-1]["OP"])
+                self._exp_[-1]["T"] = var["T"]
+                self._evaluatedType_ = None
+            else:
+                self._exp_[-1]["T"] = self._evaluatedType_
        
 
     def Dtempty(self):
@@ -63,34 +79,34 @@ class SyntaxPhase:
             print(f"  :(   Syntax Error At Line No.: {self.tokens[self.index][2]} {self.tokens[self.index][1]}")
             print(self.semantic_class.mainTable)
             print(self.semantic_class.functionTable)
-    # def format_function_table(self):
-    #     table = PrettyTable()
-    #     table.field_names = ["Name", "Type", "Scope"]
+    def format_function_table(self):
+        table = PrettyTable()
+        table.field_names = ["Name", "Type", "Scope"]
 
-    #     for entry in self.semantic_class.functionTable:
-    #         table.add_row([entry["name"], entry["type"], entry["scope"]])
+        for entry in self.semantic_class.functionTable:
+            table.add_row([entry["name"], entry["type"], entry["scope"]])
 
-    #     self.formated_function.append(str(table))      
+        self.formated_function.append(str(table))      
 
-    # def format_class_table(self):
-    #     table = PrettyTable()
-    #     table.field_names = ["Name", "Type", "Access Modifier", "Category", "Parent", "Link"]
+    def format_class_table(self):
+        table = PrettyTable()
+        table.field_names = ["Name", "Type", "Access Modifier", "Category", "Parent", "Link"]
 
-    #     for entry in self.semantic_class.mainTable:
-    #         table.add_row([entry["name"], entry["type"], entry["access_modifier"],
-    #                        entry["category"], entry["parent"], entry["link"]])
+        for entry in self.semantic_class.mainTable:
+            table.add_row([entry["name"], entry["type"], entry["access_modifier"],
+                           entry["category"], entry["parent"], entry["link"]])
 
-    #     self.formated_function.append(str(table))
+        self.formated_function.append(str(table))
 
-    # def format_body_table(self,refDt):
-    #     table = PrettyTable()
-    #     table.field_names = ["Name", "Type", "Access Modifier", "Type Modifier","link"]
+    def format_body_table(self,refDt):
+        table = PrettyTable()
+        table.field_names = ["Name", "Type", "Access Modifier", "Type Modifier","link"]
 
-    #     for entry in self.refDt:
-    #         table.add_row([entry["name"], entry["type"], entry["access_modifier"], entry["type_modifier"]],entry ["link"])
+        for entry in self.refDt:
+            table.add_row([entry["name"], entry["type"], entry["access_modifier"], entry["type_modifier"]],entry ["link"])
         
 
-    #     self.formated_function.append(str(table))     
+        self.formated_function.append(str(table))     
        
    
     #####################################DECLARATION############################
@@ -926,10 +942,12 @@ class SyntaxPhase:
             
         return False
     def OE(self):
+        self._exp_.append({"T":"","T1":"","T2":"","OP":""})
         if not self.AE():
             return False
         if not self.OE_prime():
             return False
+        self._evaluatedType_ = self._exp_.pop()["T"]
         return True
 
     def OE_prime(self):
@@ -973,7 +991,10 @@ class SyntaxPhase:
     def RE_prime(self):
         if self.tokens[self.index][0] == 'ROP':
             self.opr=self.tokens[self.index][1]
-           
+            ##########################TYPE CHECKING#############################
+            self._exp_[-1]["OP"] = self.opr
+            ##########################TYPE CHECKING#############################
+   
             self.index += 1
             if not self.E():
                 return False
@@ -992,8 +1013,12 @@ class SyntaxPhase:
     def E_prime(self):
         if (self.tokens[self.index][0] in ('PM') or self.tokens[self.index][1]=='='):
             self.opr=self.tokens[self.index][1]
-            self.T2=self.semantic_class.Compare(self.T,self.T1,self.opr)
-          
+            # self.T2=self.semantic_class.Compare(self.T,self.T1,self.opr)
+
+            ##########################TYPE CHECKING#############################
+            self._exp_[-1]["OP"] = self.opr
+            ##########################TYPE CHECKING#############################
+
             self.index += 1
             if not self.TI():
                 return False
@@ -1013,6 +1038,9 @@ class SyntaxPhase:
         if self.tokens[self.index][0] == 'MDM':
             self.opr=self.tokens[self.index][1]
             self.index += 1
+            ##########################TYPE CHECKING#############################
+            self._exp_[-1]["OP"] = self.opr
+            ##########################TYPE CHECKING#############################
             self.T2=self.semantic_class.Compare(self.T,self.T1,self.opr)
             if not self.F():
                 return False
@@ -1030,6 +1058,8 @@ class SyntaxPhase:
             self.index += 1
             return True
         elif self.constant():
+            self._evaluatedType_ = self.T1
+            self.compare()
             return True   
         elif self.tokens[self.index][0] == '(':
             self.index += 1
@@ -1037,6 +1067,7 @@ class SyntaxPhase:
                 return False
             if self.tokens[self.index][0] != ')':
                 return False
+            self.compare()
             self.index += 1
             return True
         elif self.tokens[self.index][0] == '!':
