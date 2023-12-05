@@ -1051,8 +1051,11 @@ class SyntaxPhase:
 
     def F(self):
         if self.tokens[self.index][0] =='ID':
-            self.N=self.tokens[self.index][1]
-            self.T1=self.semantic_class.lookup_FT(self.N)
+            # self.N=self.tokens[self.index][1]
+            N=self.tokens[self.index][1]
+            self.T1=self.semantic_class.lookup_FT(N)
+            self._evaluatedType_ = self.T1
+            self.compare()
             if (self.T=="null"):
                print("UNDECLARED")
             self.index += 1

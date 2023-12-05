@@ -1,2 +1,8 @@
+int c=10;
+int a=10;
 
-int a = b.c
+int x(string a){}
+
+
+
+int b = fun();
