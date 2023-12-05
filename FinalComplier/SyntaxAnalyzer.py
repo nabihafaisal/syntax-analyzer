@@ -2127,8 +2127,8 @@ class SyntaxPhase:
                         return True
         return False
 
-    def New1(self):
-        # print("New1")
+    def New_(self):
+        # print("New_")
         if (self.ReferenceAccess()):
             return True
         if (self.tokens[self.index][1] == "("):
@@ -2195,7 +2195,7 @@ class SyntaxPhase:
             self.advance()
             if (self.Class == "ID"):
                 self.advance()
-                return self.New1()
+                return self.New_()
         return False
 
     def ReferenceAccess(self):
