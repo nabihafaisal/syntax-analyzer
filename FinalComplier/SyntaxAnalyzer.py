@@ -29,7 +29,12 @@ class SyntaxPhase:
         self.tokens = tokens
         self.index = 0
         self.formated_function=[]
+        self.current_token = None
+
         #########################################TYPECHECKING################################################       
+        self._functionCall_ = {"N":"","PL":""}
+        self._function_ = {"N":"","T":"","AM":"","TM":"","PL":""}
+        self._CRef_ = ""
         self._exp_ = []#{"T":"","T1":"","T2":"","OP":""}]
         self._evaluatedType_ = None
         #########################################TYPECHECKING################################################       
@@ -108,7 +113,18 @@ class SyntaxPhase:
 
         self.formated_function.append(str(table))     
        
-   
+
+    def advance(self):
+        self.index += 1
+        if self.index < len(self.tokens):
+            self.current_token = self.tokens[self.index][1]
+            # self.current_line = self.tokens[self.index]["Line"]
+            # self.current_col = self.tokens[self.index]["Col"]
+            self.Class = self.tokens[self.index][0]
+        else:
+            self.current_token = None
+
+
     #####################################DECLARATION############################
     # def dec(self):
     #     if (
@@ -792,10 +808,10 @@ class SyntaxPhase:
 
     # def Exp(self):
     #     # print("Exp")
-    #     #self.exp.append({"T":"","T1":"","T2":"","OP":""})
+    #     #self.OE.append({"T":"","T1":"","T2":"","OP":""})
     #     if (self.AE()):
     #         if (self.OE()):
-    #             #self.evaluatedType = self.exp.pop()["T"]
+    #             #self.evaluatedType = self.OE.pop()["T"]
     #             return True
     #     return False
 
@@ -904,7 +920,7 @@ class SyntaxPhase:
     #         return True
     #     if (self.tokens[self.index][1]=="("):
     #         self.index+=1
-    #         if (self.Exp()):
+    #         if (self.OE()):
     #             if (self.tokens[self.index][1] == ")"):
     #                # self.compare()
     #                 self.index+=1
@@ -1059,6 +1075,11 @@ class SyntaxPhase:
             if (self.T=="null"):
                print("UNDECLARED")
             self.index += 1
+            # self.tokens[self.index][1] = self.tokens[self.index][1]
+            if(self.FuncVar()):
+                return True
+            else:
+                return False
             return True
         elif self.constant():
             self._evaluatedType_ = self.T1
@@ -1078,7 +1099,7 @@ class SyntaxPhase:
             if not self.F():
                 return False
         return True
-  # handle other cases for <F>
+  # handle ReferenceAccesser cases for <F>
         return False
     
     ################################################ ARRAY-DEC ##################################
@@ -2060,3 +2081,174 @@ class SyntaxPhase:
                    return False
                 
             return True
+    
+    ###########################################OBJECT AND ARRAY IMPLEMENTATION################################################
+    
+    def FuncVar(self):
+        # print("FuncVar")
+        if (self.tokens[self.index][1] in ";,)]ϵ+-" or self.tokens[self.index][1] in [">=", "<=", "==", ">", "<", "!="] or self.tokens[self.index][1] == "||" or self.tokens[self.index][1] == "&&"):
+            # var = self.semantic.LookUpST(self.getPreviousToken(),"")
+            # self._evaluatedType_ = var["Type"]
+            # self.compare()
+
+            return True
+        # if (self.tokens[self.index][1] in ";,)]ϵ"):
+        #     return True
+        # if (self.tokens[self.index][1] == ";"):
+        #     return True
+        if (self.tokens[self.index][1] == "("):
+            if (self.FunctionCall()):
+                return True
+        if (self.tokens[self.index][1] in ".["):
+            # var = self.semantic.LookUpST(self.getPreviousToken(),"")
+            # self._evaluatedType_ = var["Type"]
+            # self.compare()
+            if (self.ReferenceAccess()):
+                return True
+        return False
+
+    def FunctionCall(self):
+        # print("FunctionCall")
+        if (self.tokens[self.index][1] == ";"):
+            return True
+        if (self.tokens[self.index][1] == "("):
+            # self._functionCall_["N"] = self.getPreviousToken()
+            self.advance()
+            if (self.Params()):
+                if (self.tokens[self.index][1] == ")"):
+                    # var = self.semantic.LookUpST(self._functionCall_["N"],self._functionCall_["PL"])
+                    # self._evaluatedType_ = var["T"]
+                    self._functionCall_["N"] = ""
+                    self._functionCall_["PL"] = ""
+
+                    # self.compare()
+                    self.advance()
+                    if (self.ReferenceAccess()):
+                        return True
+        return False
+
+    def New1(self):
+        # print("New1")
+        if (self.ReferenceAccess()):
+            return True
+        if (self.tokens[self.index][1] == "("):
+            # self._functionCall_["N"] = self.getPreviousToken()
+            self.advance()
+            if (self.Params()):
+                if (self.tokens[self.index][1] == ")"):
+                    # var = self.semantic.LookUpFunctionMT(self._CRef_,self._functionCall_["N"],self._functionCall_["PL"])
+                    # self._evaluatedType_ = var["T"]
+                    # self._CRef_ = self._evaluatedType_
+                    self.advance()
+                    if (self.ReferenceAccess()):
+                        return True
+        return False
+
+    def arrayAccess(self):
+        # print("arrayAccess")
+        if (self.tokens[self.index][1] == "["):
+            #LOOKUP USING REF IMPLEMENTED HERE
+            if(self._CRef_ != ""):
+                if(self._functionCall_["N"] == ""):
+                    # var = self.semantic.LookUpVarMT(self._CRef_,self.getPreviousToken())
+                    # self._evaluatedType_ = var["Type"]
+                    pass
+                else:
+                    # var = self.semantic.LookUpFunctionMT(self._CRef_,self._functionCall_["N"],self._functionCall_["PL"])
+                    # self._evaluatedType_ = var["T"]
+                    self._functionCall_["N"] = ""
+                    self._functionCall_["PL"] = ""
+                # pass
+            self._CRef_ = self._evaluatedType_
+            #LOOKUP USING REF IMPLEMENTED HERE
+            # if("[]" not in self._evaluatedType_):
+            #     raise IndexError(f"Indexing can not be applied to type {self._evaluatedType_}")
+            
+            self.advance()
+            if (self.OE()):
+                # self.advance()
+                # self.tokens[self.index][1] = self.tokens[self.index][1]
+                # if(self._evaluatedType_ not in ["Numeric","num"] ):
+                #     raise KeyError(f"Invalid Key at Line:{self.current_line}, column:{self.current_col}")
+                if (self.tokens[self.index][1] == "]"):
+                    self.advance()
+                    # self._evaluatedType_ = self._CRef_[0:(len(self._CRef_)-2)] if self.tokens[self.index][1] != "[" else self._CRef_
+                    self._CRef_ = ""
+                    return self.ReferenceAccess()
+        return False
+
+    def MemberAccess(self):
+        # print("MemberAccess")
+        if (self.tokens[self.index][1] == "."):
+            if(self._CRef_ != ""):
+                if(self._functionCall_["N"] == ""):
+                    # var = self.semantic.LookUpVarMT(self._CRef_,self.getPreviousToken())
+                    pass
+                    # self._evaluatedType_ = var["Type"]
+                else:
+                    # var = self.semantic.LookUpFunctionMT(self._CRef_,self._functionCall_["N"],self._functionCall_["PL"])
+                    # self._evaluatedType_ = var["T"]
+                    self._functionCall_["N"] = ""
+                    self._functionCall_["PL"] = ""
+                
+            self._CRef_ = self._evaluatedType_
+            self.advance()
+            if (self.Class == "ID"):
+                self.advance()
+                return self.New1()
+        return False
+
+    def ReferenceAccess(self):
+        # print("ReferenceAccess")
+        if (self.tokens[self.index][1] in ";=)]," or self.tokens[self.index][1] in ["+", "-", "/", "%", "*",
+                         "^","<", ">", "!", ">=", "<=", "==", "!=", "&&", "||"]):
+            #CHECK CLASS REFERENCE HERE
+            if(self._CRef_ != ""):
+                if(self._functionCall_["N"] == ""):
+                    # var = self.semantic.LookUpVarMT(self._CRef_,self.getPreviousToken())
+                    # self._evaluatedType_ = var["Type"]
+                    pass
+                else:
+                    # var = self.semantic.LookUpFunctionMT(self._CRef_,self._functionCall_["N"],self._functionCall_["PL"])
+                    # self._evaluatedType_ = var["T"]
+                    self._functionCall_["N"] = ""
+                    self._functionCall_["PL"] = ""
+            # self.compare()
+            return True
+
+        if (self.tokens[self.index][1] == "["):
+            return self.arrayAccess()
+        elif (self.MemberAccess()):
+        # self._CRef_ = self._evaluatedType_
+        # if(self.MemberAccess()):
+            return True
+            # return self.MemberAccess()
+        return False
+
+
+    def Params(self):
+        # print("Params")
+        if (self.tokens[self.index][1] == ")"):
+            self._functionCall_["PL"] = "-"
+            return True
+        if (self.OE()):
+            if(self._functionCall_["PL"] == ""):
+                self._functionCall_["PL"] = self.formatType(self._evaluatedType_)
+            else:
+                self._functionCall_["PL"] += ","+self.formatType(self._evaluatedType_)
+            if (self.ParamList()):
+                return True
+        return False
+
+    def ParamList(self):
+        # print("ParamList")
+        if (self.tokens[self.index][1] == ")"):
+            return True
+
+        if (self.tokens[self.index][1] == ","):
+            self.advance()
+            if (self.Params()):
+                return True
+        return False
+
+    ###########################################OBJECT AND ARRAY IMPLEMENTATION################################################

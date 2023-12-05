@@ -1,8 +1,2 @@
-int c=10;
-int a=10;
 
-int x(string a){}
-
-
-
-int b = fun();
+int b = d + d[0].d.d.s.s();

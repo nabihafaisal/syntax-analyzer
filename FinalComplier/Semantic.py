@@ -251,7 +251,9 @@ class SemanticClass:
                 return var['type']
         return "null"
     def Compare(self,T1,T2,OP):
-      
+        #REMOVE IT LATER
+        if(T1=='null'):
+            return  {"T":T1}
         print("compared")
         if(OP in ["+", "-", "/", "%", "*","^", "&&", "||"]):
             if(T1 == T2 and (T1 == "string") and OP == "+"):
