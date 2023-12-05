@@ -1,3 +1,5 @@
+from prettytable import PrettyTable
+from tabulate import tabulate
 ###################SEMANTIC CLASS#####################################
 class MainTable:
     def __init__(self):
@@ -6,7 +8,8 @@ class MainTable:
         self.access_modifier = None
         self.category = None
         self.parent = None
-        self.link = []
+        self.link =[]
+       
 
     def __str__(self):
         return f"\n MainTable" \
@@ -86,28 +89,47 @@ class SemanticClass:
         self.scope = []
         self.mainTable = []
         self.functionTable = []
+        self.Ftable=[]
+        self.Btable=[]
+        self.table=[]
+        self.link=0
+        
+     
+       
     
   
 
 
 
     def create_DT(self):
-        
-        
-        
-        return []
+       
+      
+       return []
 
     def insert_MT(self, name, type, access_modifier, category, parent, link):
+        self.table = PrettyTable()
+        self.link+=1
+        self.table.field_names = ["Name", "Type", "Access Modifier", "Category", "Parent", "Link"]
+       
+       
         maintable = {
             'name': name,
             'type': type,
             'access_modifier': access_modifier,
             'category': category,
             'parent': parent,
-            'link': link
+            'link': self.link
+            
         }
         if maintable not in self.mainTable:
+           
+           
             self.mainTable.append(maintable)
+       
+
+            for entry in self.mainTable:
+                self.table.add_row([entry["name"], entry["type"], entry["access_modifier"],
+                            entry["category"], entry["parent"], entry["link"]])
           
             
             return True
@@ -120,32 +142,41 @@ class SemanticClass:
             'type': 'void',
             'type_modifier': None,
             'access_modifier': 'public',
-            'link': link
+            
         }
         link.append(default_constructor)
+       
 
     def insert_DT(self, name, type, typemodifier, accessmodifier, link):
-    
-      
+            self.Btable = PrettyTable()
+            self.Btable.field_names = ["Name", "Type", "AcessModifier","Type Modifier"]
+       
 
-        BodyTable = {
-            'name': name,
-            'type': type,
-            'type_modifier': typemodifier,
-            'access_modifier': accessmodifier,
-            'link':link
-           
+            BodyTable = {
+                
+                'name': name,
+                'type': type,
+                'type_modifier': typemodifier,
+                'access_modifier': accessmodifier,
+            
 
-        }
-        if BodyTable not in link:
-            link.append(BodyTable)
-         
-            return True
-        else:
-            print(f"Variable '{BodyTable['name']}' is already defined in this scope")
-            return False
+            }
+            if BodyTable not in link:
+                link.append(BodyTable)
+                for entry in link:
+                    self.Btable.add_row([entry["name"], entry["type"], entry["access_modifier"],entry ["type_modifier"]])
+
+       
+
+
+                return True
+            else:
+                print(f"Variable '{BodyTable['name']}' is already defined in this scope")
+                return False
 
     def insert_FT(self, name, type):
+        self.Ftable = PrettyTable()
+        self.Ftable.field_names = ["Name", "Type", "Scope"]
         functionTable = {
             'name': name,
             'type': type,
@@ -155,14 +186,18 @@ class SemanticClass:
    
               
                     self.functionTable.append(functionTable)
+                    for entry in self.functionTable:
+                        self.Ftable.add_row([entry["name"], entry["type"], entry["scope"]])
                    
                     return True
+      
         
         else:
             print(f"Variable '{functionTable['name']}' is already defined in this scope")
             return False
+        
    
-
+  
  
 
 
@@ -255,3 +290,4 @@ class SemanticClass:
     def destroyScope(self):
         self.scopeno-=1
         self.scope.pop()
+    
