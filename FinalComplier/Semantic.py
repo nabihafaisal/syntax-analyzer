@@ -254,10 +254,12 @@ class SemanticClass:
       
         print("compared")
         if(OP in ["+", "-", "/", "%", "*","^", "&&", "||"]):
-            if(T1 == T2 and T1 == "string" and OP == "+"):
+            if(T1 == T2 and (T1 == "string") and OP == "+"):
                 return {"T":T1}
-            if(T1 == T2 and T1 == "int"):
+            if(T1 == T2 and (T1 == "int" or T1 == 'float')):
                 return {"T":T1}
+            elif((T1 == "float" and T2 == "int") or (T2 == "float" and T1 == "int")):
+                return {"T":"float"}
             else:
                 raise TypeError(f"Type Mismatched {T1} and {T2}")
         if(OP in ["<", ">", "!", ">=", "<=", "==", "!="]):
