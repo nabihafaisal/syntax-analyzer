@@ -1,14 +1,17 @@
 
 class B{
   public int x;
-  virtual int fn(int x){
+  public virtual int fn(int x){
 
   }
   
 
 }
 class A extends B{
-  override int fn(int z){
+  public override int fn(int z){
 
   }
 }
+
+B a= new A();
+A b=new B();
