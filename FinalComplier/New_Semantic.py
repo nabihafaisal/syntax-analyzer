@@ -57,23 +57,23 @@ class Semantic:
 
     def checkParentInterface(self,N):
         if(len(self.definitionTable) == 0):
-            raise NameError(f"{N}: No such interface in current scope")
+            raise NameError(f"{N}: No such class in current scope")
         for i in self.definitionTable:
             if N == i["Name"] and i["Scope"] in self.scopeStack:
-                if(i["Type"] != "Interface"):
+                if(i["Type"] != "class"):
                     raise NameError(f"\n{N}: Invalid parent")
                 return
-        raise NameError(f"{N}: No such interface in current scope")
+        raise NameError(f"{N}: No such class in current scope")
 
     def checkParentClass(self,N):
         if(len(self.definitionTable) == 0):
-            raise NameError(f"{N}: No such interface in current scope")
+            raise NameError(f"{N}: No such class in current scope")
         for i in self.definitionTable:
             if N == i["Name"] and i["Scope"] in self.scopeStack:
                 if(i["CM"] == "sealed"):
                     raise TypeError(f"\n{N}: Cannot Inherit Sealed class")
                 return
-        raise NameError(f"{N}: No such interface in current scope")
+        raise NameError(f"{N}: No such class in current scope")
 
     def insertDefaultConstructorInST(self,N):
         self.insertST(N,N+" --> -")
