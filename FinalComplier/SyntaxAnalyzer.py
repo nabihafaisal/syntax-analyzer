@@ -1508,6 +1508,10 @@ class SyntaxPhase:
             self.index += 1
             if self.param():
                 if self.tokens[self.index][0] == ")":
+                    if(self.cTm == "override"):
+                        var = self.semantic.LookUpFunctionMT(self.Prnt,self.cName,self.P)
+                        if(var["TM"] != 'virtual'):
+                            raise TypeError(f"No virtual function {self.cName} in class {self.Prnt}")
                     self.semantic.insertMT(self.cName,self.P,self.Am,self.cTm,self.refDt[0]["name"])####NEW SEMANTIC########if not self.semantic_class.insert_DT(self.cName,self.P,self.cTm,self.Am,self.refDt):
                        
                     #     print("Function Declaration")

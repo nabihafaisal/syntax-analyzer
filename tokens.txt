@@ -1,12 +1,7 @@
-int c = 10;
 
-
-class C{
-
-}
-sealed class B extends C{
+class B{
   public int x;
-  virtual int fn(int x){
+  public int fn(int x){
 
   }
   
