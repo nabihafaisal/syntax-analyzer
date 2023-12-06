@@ -54,7 +54,7 @@ class SyntaxPhase:
 
     def compareLHS_RHS(self):
         # try:
-        if(self.T != self._evaluatedType_):
+        if(self.T != self._evaluatedType_ and (self.T != "" and self._evaluatedType_ != "")):
             raise TypeError(f"Cannot assign {self._evaluatedType_} to type {self.T}")
 
     def Dtempty(self):
