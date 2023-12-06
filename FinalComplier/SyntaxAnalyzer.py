@@ -51,7 +51,11 @@ class SyntaxPhase:
                 self._evaluatedType_ = None
             else:
                 self._exp_[-1]["T"] = self._evaluatedType_
-       
+
+    def compareLHS_RHS(self):
+        # try:
+        if(self.T != self._evaluatedType_):
+            raise TypeError(f"Cannot assign {self._evaluatedType_} to type {self.T}")
 
     def Dtempty(self):
         self.cName = None
@@ -966,6 +970,7 @@ class SyntaxPhase:
         if not self.OE_prime():
             return False
         self._evaluatedType_ = self._exp_.pop()["T"]
+        self.compareLHS_RHS()
         return True
 
     def OE_prime(self):

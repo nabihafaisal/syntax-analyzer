@@ -1,14 +1,3 @@
 
-class B{
-  public int x;
-  virtual int fn(int x){
 
-  }
-  
-
-}
-class A extends B{
-  override int fn(int z){
-
-  }
-}
+string x = 5 + 5;
