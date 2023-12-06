@@ -166,12 +166,12 @@ class Semantic:
 
     def checkDT(self,DT):
         if(DT in ['num','str','bool','num[]','str[]','bool[]']):
-            return
+            return True
         else:
             for i in self.definitionTable:
                 if(i["Name"] == DT or i["Name"]+"[]" == DT):
-                    return
-        raise LookupError(f"{DT} is not a valid datatype")
+                    return True
+        return False
 
     def print(self):
         # return

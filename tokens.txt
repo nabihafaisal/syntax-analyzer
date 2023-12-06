@@ -1,32 +1,17 @@
-string b="s"+"b";
 
 
 int c=10;
-int a=10;
-int f=c.a.A[0];
 
-string d=c+a;
-void abd(){
-    int d=10;
 
+class A{
+  public int x; 
 }
 
-
-int [][]A= new int [5][5];
-
-
-abstract class B{
-  public void sleep() {
-    
- 
-  }
- 
+class B{
+  public A x; 
 }
 
+B a = new B();
 
-if(a>c)
 
-while(abd().a!=c.f){
-
-}
-
+string d = c + a.x.x ;

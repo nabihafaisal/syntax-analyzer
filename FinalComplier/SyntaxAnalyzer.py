@@ -124,6 +124,8 @@ class SyntaxPhase:
         else:
             self.current_token = None
 
+    def getPreviousToken(self):
+        return self.tokens[self.index-1][1]
 
     #####################################DECLARATION############################
     # def dec(self):
@@ -1068,12 +1070,12 @@ class SyntaxPhase:
     def F(self):
         if self.tokens[self.index][0] =='ID':
             # self.N=self.tokens[self.index][1]
-            N=self.tokens[self.index][1]
-            self.T1=""#self.semantic_class.lookup_FT(N)
-            self._evaluatedType_ = self.T1
-            self.compare()
-            if (self.T=="null"):
-               print("UNDECLARED")
+            # N=self.tokens[self.index][1]
+            # self.T1=""#self.semantic_class.lookup_FT(N)
+            # self._evaluatedType_ = self.T1
+            # self.compare()
+            # if (self.T=="null"):
+            #    print("UNDECLARED")
             self.index += 1
             # self.tokens[self.index][1] = self.tokens[self.index][1]
             if(self.FuncVar()):
@@ -1743,7 +1745,7 @@ class SyntaxPhase:
             self.index += 1
             if self.B10():
                 return True
-        elif self.tokens[self.index][0] == "DT":
+        elif self.tokens[self.index][0] == "DT" or self.semantic.checkDT(self.tokens[self.index][1]):
             self.T=self.tokens[self.index][1]
             self.index += 1
             if self.B9():
@@ -2088,9 +2090,9 @@ class SyntaxPhase:
     def FuncVar(self):
         # print("FuncVar")
         if (self.tokens[self.index][1] in ";,)]ϵ+-" or self.tokens[self.index][1] in [">=", "<=", "==", ">", "<", "!="] or self.tokens[self.index][1] == "||" or self.tokens[self.index][1] == "&&"):
-            # var = self.semantic.LookUpST(self.getPreviousToken(),"")
-            # self._evaluatedType_ = var["Type"]
-            # self.compare()
+            var = self.semantic.LookUpST(self.getPreviousToken(),"")
+            self._evaluatedType_ = var["Type"]
+            self.compare()
 
             return True
         # if (self.tokens[self.index][1] in ";,)]ϵ"):
@@ -2101,8 +2103,8 @@ class SyntaxPhase:
             if (self.FunctionCall()):
                 return True
         if (self.tokens[self.index][1] in ".["):
-            # var = self.semantic.LookUpST(self.getPreviousToken(),"")
-            # self._evaluatedType_ = var["Type"]
+            var = self.semantic.LookUpST(self.getPreviousToken(),"")
+            self._evaluatedType_ = var["Type"]
             # self.compare()
             if (self.ReferenceAccess()):
                 return True
@@ -2183,12 +2185,11 @@ class SyntaxPhase:
         if (self.tokens[self.index][1] == "."):
             if(self._CRef_ != ""):
                 if(self._functionCall_["N"] == ""):
-                    # var = self.semantic.LookUpVarMT(self._CRef_,self.getPreviousToken())
-                    pass
-                    # self._evaluatedType_ = var["Type"]
+                    var = self.semantic.LookUpVarMT(self._CRef_,self.getPreviousToken())
+                    self._evaluatedType_ = var["Type"]
                 else:
-                    # var = self.semantic.LookUpFunctionMT(self._CRef_,self._functionCall_["N"],self._functionCall_["PL"])
-                    # self._evaluatedType_ = var["T"]
+                    var = self.semantic.LookUpFunctionMT(self._CRef_,self._functionCall_["N"],self._functionCall_["PL"])
+                    self._evaluatedType_ = var["T"]
                     self._functionCall_["N"] = ""
                     self._functionCall_["PL"] = ""
                 
@@ -2206,15 +2207,14 @@ class SyntaxPhase:
             #CHECK CLASS REFERENCE HERE
             if(self._CRef_ != ""):
                 if(self._functionCall_["N"] == ""):
-                    # var = self.semantic.LookUpVarMT(self._CRef_,self.getPreviousToken())
-                    # self._evaluatedType_ = var["Type"]
-                    pass
+                    var = self.semantic.LookUpVarMT(self._CRef_,self.getPreviousToken())
+                    self._evaluatedType_ = var["Type"]
                 else:
-                    # var = self.semantic.LookUpFunctionMT(self._CRef_,self._functionCall_["N"],self._functionCall_["PL"])
-                    # self._evaluatedType_ = var["T"]
+                    var = self.semantic.LookUpFunctionMT(self._CRef_,self._functionCall_["N"],self._functionCall_["PL"])
+                    self._evaluatedType_ = var["T"]
                     self._functionCall_["N"] = ""
                     self._functionCall_["PL"] = ""
-            # self.compare()
+            self.compare()
             return True
 
         if (self.tokens[self.index][1] == "["):
