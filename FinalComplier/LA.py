@@ -469,7 +469,7 @@ class Tokenizer:
             # Compare the token buffer with regular expressions for different tokens
             if self.token_buffer in Tokenizer.keywords:
                 token = self.token_buffer
-                token_name = 'KEYWORD'
+                token_name = self.token_buffer
                 self.increment_pointer()
                 continue
 
@@ -622,7 +622,7 @@ class Tokenizer:
                 continue
             if self.token_buffer in Tokenizer.relational_operators:
                 token = self.token_buffer
-                token_name = 'relational operator'
+                token_name = 'ROP'
                 self.increment_pointer()
                 continue
             
