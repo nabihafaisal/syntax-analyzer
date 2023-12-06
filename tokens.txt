@@ -3,7 +3,7 @@ string b="s"+"b";
 
 int c=10;
 int a=10;
-int f=a.A[0];
+int f=c.a.A[0];
 
 string d=c+a;
 void abd(){
@@ -15,12 +15,18 @@ void abd(){
 int [][]A= new int [5][5];
 
 
-class B{
-  public void sleep(int b) {
+abstract class B{
+  public void sleep() {
     
  
   }
  
 }
 
+
+if(a>c)
+
+while(abd().a!=c.f){
+
+}
 
