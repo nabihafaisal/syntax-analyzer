@@ -711,7 +711,7 @@ class SyntaxPhase:
                     if self.param1():
                         return True
         elif self.tokens[self.index][1] == ")":
-           
+            self.P = self.T
             return True
         return False
 
