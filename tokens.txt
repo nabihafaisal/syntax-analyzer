@@ -1,7 +1,7 @@
 
 class B{
   public int x;
-  public int fn(int x){
+  virtual int fn(int x){
 
   }
   
@@ -9,6 +9,6 @@ class B{
 }
 class A extends B{
   override int fn(int z){
-    
+
   }
 }
