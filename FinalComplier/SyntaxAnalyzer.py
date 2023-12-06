@@ -1,4 +1,5 @@
 from Semantic import SemanticClass
+from New_Semantic import Semantic
 from prettytable import PrettyTable
 
 
@@ -23,9 +24,8 @@ class SyntaxPhase:
         self.T1 = "null"
         self.T3 = "null"
         self.T2 = "null"
-        self.T4 = "null"
-        self.T5 = "null"
         self.semantic_class = SemanticClass()
+        self.semantic = Semantic()
         self.tokens = tokens
         self.index = 0
         self.formated_function=[]
@@ -82,8 +82,8 @@ class SyntaxPhase:
                 print("not reaching $")
         else:
             print(f"  :(   Syntax Error At Line No.: {self.tokens[self.index][2]} {self.tokens[self.index][1]}")
-            print(self.semantic_class.mainTable)
-            print(self.semantic_class.functionTable)
+            # print(self.semantic_class.mainTable)
+        self.semantic.print()
     def format_function_table(self):
         table = PrettyTable()
         table.field_names = ["Name", "Type", "Scope"]
@@ -276,7 +276,7 @@ class SyntaxPhase:
                     return True
             elif self.tokens[self.index][0] == "ID":
                 self.N=self.tokens[self.index][1]
-                self.T=self.semantic_class.lookup_MT(self.N)
+                self.T=""#self.semantic_class.lookup_MT(self.N)
                 if self.T=="null":
                     print("Undeclared "+self.N)
                 else:
@@ -294,7 +294,7 @@ class SyntaxPhase:
                 self.index += 1
                 if self.tokens[self.index][0] == "ID":
                     self.N=self.tokens[self.index][1]
-                    self.T=self.semantic_class.lookup_MT(self.N)
+                    self.T=""#self.semantic_class.lookup_MT(self.N)
                     if self.T=="null":
                         print("Undeclared "+self.N)
                     else:
@@ -321,7 +321,7 @@ class SyntaxPhase:
         # ):
         if self.tokens[self.index][0] == "ID":
             self.N1=self.tokens[self.index][1]
-            self.semantic_class.insert_FT(self.N1,self.N)
+            self.semantic.insertST(self.N1,self.N)####NEW SEMANTIC########self.semantic_class.insert_FT(self.N1,self.N)
             # if self.T=="null":
             #     print("Undeclared "+self.N)
             # else:
@@ -350,7 +350,7 @@ class SyntaxPhase:
            
             if self.dec2():
                 if(self.N!=None and self.T!=None):
-                    self.semantic_class.insert_FT(self.N,self.T)
+                    self.semantic.insertST(self.N,self.T)####NEW SEMANTIC########self.semantic_class.insert_FT(self.N,self.T)
                     self.N=None
                 
 
@@ -368,7 +368,7 @@ class SyntaxPhase:
                 if self.br():
                     if self.tokens[self.index][0] == "ID":
                         self.N=self.tokens[self.index][1]
-                        self.semantic_class.insert_FT(self.N,self.T)
+                        self.semantic.insertST(self.N,self.T)####NEW SEMANTIC########self.semantic_class.insert_FT(self.N,self.T)
                         self.index += 1
                         if self.Arraydef():
                             if self.tokens[self.index][1] == ";":
@@ -390,7 +390,7 @@ class SyntaxPhase:
                             self.semantic_class.createScope()
                             if self.OE():
                                 if(self.N!=None):
-                                    self.semantic_class.insert_FT(self.N,self.T)
+                                    self.semantic.insertST(self.N,self.T)####NEW SEMANTIC########self.semantic_class.insert_FT(self.N,self.T)
                                 if self.tokens[self.index][1] == ")":
                                     self.index += 1
                                     if self.tokens[self.index][1] == ":":
@@ -412,7 +412,7 @@ class SyntaxPhase:
 
                 if self.OE():
                     if (self.N!=None):
-                        self.semantic_class.insert_FT(self.N,self.T)
+                        self.semantic.insertST(self.N,self.T)####NEW SEMANTIC########self.semantic_class.insert_FT(self.N,self.T)
                     if self.tokens[self.index][1] == ")":
                         self.index += 1
 
@@ -435,7 +435,7 @@ class SyntaxPhase:
                 self.index += 1
                 if self.OE():
                     if (self.N != None):
-                        self.semantic_class.insert_FT(self.N,self.T)
+                        self.semantic.insertST(self.N,self.T)####NEW SEMANTIC########self.semantic_class.insert_FT(self.N,self.T)
                     if self.tokens[self.index][1] == ")":
                         self.index += 1
                         if self.body():
@@ -451,7 +451,7 @@ class SyntaxPhase:
             self.semantic_class.createScope()
             if self.body():
                 if (self.N!=None):
-                    self.semantic_class.insert_FT(self.N,self.T)
+                    self.semantic.insertST(self.N,self.T)####NEW SEMANTIC########self.semantic_class.insert_FT(self.N,self.T)
                     #self.semantic_class.destroyScope()
                 self.N=None
                 self.T=None
@@ -664,7 +664,7 @@ class SyntaxPhase:
                         self.index += 1
                         if self.param():
                             if self.tokens[self.index][1] == ")":
-                                self.semantic_class.insert_DT(self.N,self.T,self.Am,self.cTm,self.refDt)
+                                self.semantic.insertMT(self.N,self.T,self.Am,self.cTm,self.refDt[0]["name"])####NEW SEMANTIC########self.semantic_class.insert_DT(self.N,self.T,self.Am,self.cTm,self.refDt)
                                 self.index += 1
                                 if self.tokens[self.index][1] == ";":
                                     self.index += 1
@@ -679,7 +679,7 @@ class SyntaxPhase:
             if self.param():
                 if self.tokens[self.index][1] == ")":
                     self.index += 1
-                    self.semantic_class.insert_FT(self.N,self.P)
+                    self.semantic.insertST(self.N,self.T)####NEW SEMANTIC########self.semantic_class.insert_FT(self.N,self.P)
                     
                     if self.body():
                        # self.semantic_class.destroyScope()
@@ -707,7 +707,7 @@ class SyntaxPhase:
                 if self.tokens[self.index][0] == "ID":
                     self.N1=self.tokens[self.index][1]
                     self.index += 1
-                    self.semantic_class.insert_FT(self.N1,self.T)
+                    self.semantic.insertST(self.N1,self.T)####NEW SEMANTIC########self.semantic_class.insert_FT(self.N1,self.T)
                     if self.param1():
                         return True
         elif self.tokens[self.index][1] == ")":
@@ -727,7 +727,7 @@ class SyntaxPhase:
     def param2(self):
         if self.tokens[self.index][0] == "ID":
             self.N=self.tokens[self.index][1]
-            self.Ftype=self.semantic_class.lookup_MT(self.N)
+            self.Ftype=""#self.semantic_class.lookup_MT(self.N)
             if self.Ftype==None:
                 print("Undeclared:  "+self.N)
             self.P+="," +self.N
@@ -735,8 +735,8 @@ class SyntaxPhase:
             if self.br():
                 if self.tokens[self.index][0] == "ID":
                     self.Fname=self.tokens[self.index][1]
-                    if not self.semantic_class.insert_FT(self.Fname, self.Ftype):
-                        print("Redeclaration")
+                    self.semantic.insertST(self.Fname, self.Ftype)####NEW SEMANTIC########if not self.semantic_class.insert_FT(self.Fname, self.Ftype):
+                    # print("Redeclaration")
 
                     self.index += 1
                     if self.param1():
@@ -751,7 +751,7 @@ class SyntaxPhase:
             if self.br():
                 if self.tokens[self.index][0] == "ID":
                     self.N1=self.tokens[self.index][1]
-                    self.semantic_class.insert_FT(self.N1,self.T)
+                    self.semantic.insertST(self.N1,self.T)####NEW SEMANTIC########self.semantic_class.insert_FT(self.N1,self.T)
                     # if not self.semantic_class.insert_FT(self.N,self.P):
                     #     print("Redeclaration")
                     self.index += 1
@@ -776,9 +776,9 @@ class SyntaxPhase:
                         
                         self.index += 1
                         
-                        if not self.semantic_class.insert_DT(self.cName,self.P,self.cTm,self.Am,self.refDt):
+                        self.semantic.insertMT(self.cName,self.T,self.Am,self.cTm,self.refDt[0]["name"])####NEW SEMANTIC########if not self.semantic_class.insert_DT(self.cName,self.P,self.cTm,self.Am,self.refDt):
                                 
-                                print("Function Reclaration")
+                        #         print("Function Reclaration")
                         
                         self.Dtempty()
                         if self.body():
@@ -1069,7 +1069,7 @@ class SyntaxPhase:
         if self.tokens[self.index][0] =='ID':
             # self.N=self.tokens[self.index][1]
             N=self.tokens[self.index][1]
-            self.T1=self.semantic_class.lookup_FT(N)
+            self.T1=""#self.semantic_class.lookup_FT(N)
             self._evaluatedType_ = self.T1
             self.compare()
             if (self.T=="null"):
@@ -1214,7 +1214,7 @@ class SyntaxPhase:
                         self.refDt=self.semantic_class.create_DT()
                         self.semantic_class.add_default_constructor(self.N,self.refDt)
                         
-                        self.semantic_class.insert_MT(self.N,self.T,self.Am,self.Cat,self.Prnt,self.refDt)
+                        self.semantic.insertDT(self.N,self.T,self.Cat,self.Prnt,self.Am)####NEW SEMANTIC########self.semantic_class.insert_MT(self.N,self.T,self.Am,self.Cat,self.Prnt,self.refDt)
                         if self.tokens[self.index][0] == "{":
                             self.semantic_class.createScope()
                             self.index += 1
@@ -1228,9 +1228,9 @@ class SyntaxPhase:
                     self.N=self.tokens[self.index][1]
                     self.index += 1
                     if self.inherit():
-                        self.refDt=self.semantic_class.create_DT()
-                        self.semantic_class.add_default_constructor(self.N,self.refDt)
-                        self.semantic_class.insert_MT(self.N,self.T,self.Am,self.Cat,self.Prnt,self.refDt)
+                        # self.refDt=self.semantic_class.create_DT()
+                        # self.semantic_class.add_default_constructor(self.N,self.refDt)
+                        self.semantic.insertDT(self.N,self.T,self.Cat,self.Prnt,self.Am)####NEW SEMANTIC########self.semantic_class.insert_MT(self.N,self.T,self.Am,self.Cat,self.Prnt,self.refDt)
                        
                         if self.tokens[self.index][1] == "{":
                             self.semantic_class.createScope()
@@ -1256,7 +1256,7 @@ class SyntaxPhase:
             self.index+=1
             if( self.tokens[self.index][0] == "ID"):
                 self.N1=self.tokens[self.index][1]
-                self.T=self.semantic_class.lookup_MT(self.N1)
+                self.T=""#self.semantic_class.lookup_MT(self.N1)
                 if (self.T == "null"):
                     print("Undeclared: " + self.N1)
                 elif (self.T == "class" and self.Cat == "sealed"):
@@ -1505,9 +1505,9 @@ class SyntaxPhase:
             self.index += 1
             if self.param():
                 if self.tokens[self.index][0] == ")":
-                    if not self.semantic_class.insert_DT(self.cName,self.P,self.cTm,self.Am,self.refDt):
+                    self.semantic.insertMT(self.cName,self.T,self.Am,self.cTm,self.refDt[0]["name"])####NEW SEMANTIC########if not self.semantic_class.insert_DT(self.cName,self.P,self.cTm,self.Am,self.refDt):
                        
-                        print("Function Declaration")
+                    #     print("Function Declaration")
                     self.Dtempty()
 
 
@@ -1518,9 +1518,9 @@ class SyntaxPhase:
                         return True
                     
         elif self.init():
-            if not self.semantic_class.insert_DT(self.cName,self.T,self.cTm,self.Am,self.refDt):
+            self.semantic.insertMT(self.cName,self.T,self.Am,self.cTm,self.refDt[0]["name"])####NEW SEMANTIC######## if not self.semantic_class.insert_DT(self.cName,self.T,self.cTm,self.Am,self.refDt):
                        
-                        print("ReDeclaration")
+            #             print("ReDeclaration")
             self.Dtempty()
             if self.list():
                 return True
@@ -2072,14 +2072,15 @@ class SyntaxPhase:
            
             elif self.enum():
                 return True
-          
+            # self.semantic.print()   
             return False
 
     def S0(self):
             while self.tokens[self.index][0] != "$":
                 if not(self.S()):
                    return False
-                
+            # self.semantic.print()   
+            
             return True
     
     ###########################################OBJECT AND ARRAY IMPLEMENTATION################################################
