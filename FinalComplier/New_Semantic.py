@@ -55,15 +55,21 @@ class Semantic:
             self.insertDefaultConstructorInST(N)
         self.memberTables[N] = []
 
-    def checkParentInterface(self,N):
+    def checkObjectAssignment(self,N,T):
         if(len(self.definitionTable) == 0):
             raise NameError(f"{N}: No such class in current scope")
-        for i in self.definitionTable:
-            if N == i["Name"] and i["Scope"] in self.scopeStack:
-                if(i["Type"] != "class"):
-                    raise NameError(f"\n{N}: Invalid parent")
-                return
-        raise NameError(f"{N}: No such class in current scope")
+        var = self.getEntryFromDT(N)
+        if(N==T):
+            if((var["Name"] == N or var["Parent"] == T )and var["CM"] != "abstract"):
+                return var
+        elif(var["Parent"] != None):
+            return self.checkObjectAssignment(var["Parent"],T)
+        # for i in self.definitionTable:
+        #     if N == i["Name"] and i["Scope"] in self.scopeStack:
+        #         if(i["Type"] != "class"):
+        #             raise NameError(f"\n{N}: Invalid parent")
+        #         return
+        raise NameError(f"{N}: Invalid type casting")
 
     def checkParentClass(self,N):
         if(len(self.definitionTable) == 0):

@@ -282,7 +282,7 @@ class SyntaxPhase:
                     return True
             elif self.tokens[self.index][0] == "ID":
                 self.N=self.tokens[self.index][1]
-                self.T=""#self.semantic_class.lookup_MT(self.N)
+                self.T=self.semantic.getEntryFromDT(self.N)["Name"]
                 if self.T=="null":
                     print("Undeclared "+self.N)
                 else:
@@ -300,7 +300,7 @@ class SyntaxPhase:
                 self.index += 1
                 if self.tokens[self.index][0] == "ID":
                     self.N=self.tokens[self.index][1]
-                    self.T=""#self.semantic_class.lookup_MT(self.N)
+                    self.semantic.checkObjectAssignment(self.N,self.T)
                     if self.T=="null":
                         print("Undeclared "+self.N)
                     else:

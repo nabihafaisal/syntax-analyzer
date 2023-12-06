@@ -1,19 +1,12 @@
+class C{}
 
-
-class B{
-  public int x;
-  public virtual int fn(int x){
-
-  }
+class B extends C{
   
 
 }
-class A extends B{
-  public override int fn(int z){
 
-  }
+class A extends B{
 }
 
-B a= new A();
-A b=new B();
+C a= new B();
 
