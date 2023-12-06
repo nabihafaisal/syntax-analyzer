@@ -1267,7 +1267,7 @@ class SyntaxPhase:
             return True
         
         elif self.tokens[self.index][1] == "{":
-            self.semantic.appendScope()
+            # self.semantic.appendScope()
             return True
         return False
 
