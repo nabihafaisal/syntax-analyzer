@@ -679,7 +679,7 @@ class SyntaxPhase:
             if self.param():
                 if self.tokens[self.index][1] == ")":
                     self.index += 1
-                    self.semantic.insertST(self.N,self.T)####NEW SEMANTIC########self.semantic_class.insert_FT(self.N,self.P)
+                    self.semantic.insertST(self.N,self.P)####NEW SEMANTIC########self.semantic_class.insert_FT(self.N,self.P)
                     
                     if self.body():
                        # self.semantic.popScope()

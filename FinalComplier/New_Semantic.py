@@ -76,7 +76,7 @@ class Semantic:
         raise NameError(f"{N}: No such interface in current scope")
 
     def insertDefaultConstructorInST(self,N):
-        self.insertST(N,N+" -> -")
+        self.insertST(N,N+" --> -")
 
     def getEntryFromDT(self,N):
         for i in self.definitionTable:
@@ -127,8 +127,8 @@ class Semantic:
         for i in self.scopeStack:
             for j in self.scopeTable:
                 try:
-                    if(j["Name"] == N and j["Type"].split("->")[1].strip() == T and j["Scope"] == i ):
-                        j["T"] = j["Type"].split("->")[0].strip()
+                    if(j["Name"] == N and j["Type"].split("-->")[1].strip() == T and j["Scope"] == i ):
+                        j["T"] = j["Type"].split("-->")[0].strip()
                         return j
                 except:
                     if(j["Name"] == N and j["Scope"] == i):
@@ -155,7 +155,7 @@ class Semantic:
         try:
             for i in self.memberTables[Ref]:
                 if(i["Name"] == N and i["AM"] == "public" and T in i["Type"]):
-                    i["T"] = i["Type"].split("->")[0].strip()
+                    i["T"] = i["Type"].split("-->")[0].strip()
                     return i
             for i in self.getEntryFromDT(Ref)["Parent"].split("-"):
                 return self.LookUpFunctionMT(i,N,T)

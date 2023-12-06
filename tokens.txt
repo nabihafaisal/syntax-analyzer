@@ -24,6 +24,3 @@ class B{
 }
 
 
-class B {
-  public void sleep(int b){}
-}
