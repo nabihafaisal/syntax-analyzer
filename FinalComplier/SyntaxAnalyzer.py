@@ -210,7 +210,7 @@ class SyntaxPhase:
                 if self.tokens[self.index][1] == "}":
                     
                     self.index += 1
-                    self.semantic_class.destroyScope()
+                    self.semantic.popScope()
 
                     return True
         return False
@@ -387,7 +387,7 @@ class SyntaxPhase:
                         self.index += 1
                         if self.tokens[self.index][1] == "(":
                             self.index += 1
-                            self.semantic_class.createScope()
+                            self.semantic.appendScope()
                             if self.OE():
                                 if(self.N!=None):
                                     self.semantic.insertST(self.N,self.T)####NEW SEMANTIC########self.semantic_class.insert_FT(self.N,self.T)
@@ -396,7 +396,7 @@ class SyntaxPhase:
                                     if self.tokens[self.index][1] == ":":
                                         self.index += 1
                                         if self.body():
-                                            #self.semantic_class.destroyScope()
+                                            #self.semantic.popScope()
                                             self.N=None
                                             self.T=None
                                             return True
@@ -407,7 +407,7 @@ class SyntaxPhase:
         if self.tokens[self.index][0] == "while":
             self.index += 1
             if self.tokens[self.index][1] == "(":
-                self.semantic_class.createScope()
+                self.semantic.appendScope()
                 self.index += 1
 
                 if self.OE():
@@ -419,7 +419,7 @@ class SyntaxPhase:
                         if self.body():
                         
 
-                            #self.semantic_class.destroyScope()
+                            #self.semantic.popScope()
                             self.N=None
                             self.T=None
                             return True
@@ -431,7 +431,7 @@ class SyntaxPhase:
         if self.tokens[self.index][0] == "if":
             self.index += 1
             if self.tokens[self.index][1] == "(":
-                self.semantic_class.createScope()
+                self.semantic.appendScope()
                 self.index += 1
                 if self.OE():
                     if (self.N != None):
@@ -439,7 +439,7 @@ class SyntaxPhase:
                     if self.tokens[self.index][1] == ")":
                         self.index += 1
                         if self.body():
-                            #self.semantic_class.destroyScope()
+                            #self.semantic.popScope()
                             self.N=None
                             self.T=None
                             if self.else_state():
@@ -448,11 +448,11 @@ class SyntaxPhase:
     def else_state(self):
         if self.tokens[self.index][0] == "else":
             self.index += 1
-            self.semantic_class.createScope()
+            self.semantic.appendScope()
             if self.body():
                 if (self.N!=None):
                     self.semantic.insertST(self.N,self.T)####NEW SEMANTIC########self.semantic_class.insert_FT(self.N,self.T)
-                    #self.semantic_class.destroyScope()
+                    #self.semantic.popScope()
                 self.N=None
                 self.T=None
                 return True
@@ -675,14 +675,14 @@ class SyntaxPhase:
       
         if self.tokens[self.index][1] == "(":
             self.index += 1
-            self.semantic_class.createScope()
+            self.semantic.appendScope()
             if self.param():
                 if self.tokens[self.index][1] == ")":
                     self.index += 1
                     self.semantic.insertST(self.N,self.T)####NEW SEMANTIC########self.semantic_class.insert_FT(self.N,self.P)
                     
                     if self.body():
-                       # self.semantic_class.destroyScope()
+                       # self.semantic.popScope()
                         self.N=None
                         self.P="null"
                         return True
@@ -769,7 +769,7 @@ class SyntaxPhase:
             self.index += 1
             
             if self.tokens[self.index][1] == "(":
-                self.semantic_class.createScope()
+                self.semantic.appendScope()
                 self.index += 1
                 if self.param():
                     if self.tokens[self.index][1] == ")":
@@ -1216,7 +1216,7 @@ class SyntaxPhase:
                         
                         self.semantic.insertDT(self.N,self.T,self.Cat,self.Prnt,self.Am)####NEW SEMANTIC########self.semantic_class.insert_MT(self.N,self.T,self.Am,self.Cat,self.Prnt,self.refDt)
                         if self.tokens[self.index][0] == "{":
-                            self.semantic_class.createScope()
+                            self.semantic.appendScope()
                             self.index += 1
                             if self.C1():
                                 return True
@@ -1233,7 +1233,7 @@ class SyntaxPhase:
                         self.semantic.insertDT(self.N,self.T,self.Cat,self.Prnt,self.Am)####NEW SEMANTIC########self.semantic_class.insert_MT(self.N,self.T,self.Am,self.Cat,self.Prnt,self.refDt)
                        
                         if self.tokens[self.index][1] == "{":
-                            self.semantic_class.createScope()
+                            self.semantic.appendScope()
                             self.index += 1
                             if self.D1():
                                 return True
@@ -1267,13 +1267,13 @@ class SyntaxPhase:
             return True
         
         elif self.tokens[self.index][1] == "{":
-            self.semantic_class.createScope()
+            self.semantic.appendScope()
             return True
         return False
 
     def C1(self):
         if self.tokens[self.index][1] == "}":
-            self.semantic_class.destroyScope()
+            self.semantic.popScope()
             self.index += 1
             if self.S0():
                 return True
@@ -1610,7 +1610,7 @@ class SyntaxPhase:
 
     def D1(self):
         if self.tokens[self.index][0] == "}":
-            self.semantic_class.destroyScope()
+            self.semantic.popScope()
             self.index += 1
             if self.S0():
                 return True
@@ -1911,7 +1911,7 @@ class SyntaxPhase:
                     self.index += 1
                     if self.inherit():
                         if self.tokens[self.index][0] == "{":
-                            self.semantic_class.createScope()
+                            self.semantic.appendScope()
                             self.index += 1
                             if self.C():
                                 return True
@@ -1935,7 +1935,7 @@ class SyntaxPhase:
                 self.index += 1
                 if self.inherit():
                     if self.tokens[self.index][0] == "{":
-                        self.semantic_class.createScope()
+                        self.semantic.appendScope()
                         self.index += 1
                         if self.D():
                             return True
@@ -1950,7 +1950,7 @@ class SyntaxPhase:
 
     def D(self):
         if self.tokens[self.index][0] == "}":
-            self.semantic_class.destroyScope()
+            self.semantic.popScope()
             self.index += 1
             if self.S2():
                 return True
