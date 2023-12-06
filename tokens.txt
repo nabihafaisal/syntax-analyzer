@@ -1,11 +1,27 @@
+string b="s"+"b";
 
-int x;
 
-abstract class Animal {
+int c=10;
+int a=10;
+int f=a.A[0];
 
- public void d(int x){
+string d=c+a;
+void abd(){
+    int d=10;
+
+}
+
+
+int [][]A= new int [5][5];
+
+
+class B{
+  public void sleep(int b) {
     
- }
+ 
+  }
+  public void sleep(int b){
 
+  }
 
 }
