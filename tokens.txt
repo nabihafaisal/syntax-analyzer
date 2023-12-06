@@ -15,3 +15,4 @@ B a = new B();
 
 
 string d = c + a.x.x ;
+int [][]A=new int[5][5];
