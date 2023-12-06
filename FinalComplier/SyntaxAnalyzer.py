@@ -1258,7 +1258,7 @@ class SyntaxPhase:
             self.index+=1
             if( self.tokens[self.index][0] == "ID"):
                 self.N1=self.tokens[self.index][1]
-                self.T=""#self.semantic_class.lookup_MT(self.N1)
+                self.semantic.checkParentClass(self.N1)
                 if (self.T == "null"):
                     print("Undeclared: " + self.N1)
                 elif (self.T == "class" and self.Cat == "sealed"):

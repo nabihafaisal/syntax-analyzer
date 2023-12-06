@@ -1,46 +1,11 @@
-
-
-int c=10;
-
-
-
-class A{
-  public int x; 
-  A(int f, int h){
-    this.f=f+2;
-    this.h=h+2;
-  }
-}
-abstract class C{
-  virtual void abd(){
-
-  }
-}
+int c = 10;
 
 class B extends C{
-  public int x; 
+  public int x;
   static int f;
   override void abd(){
-    
+
   }
 }
 
-
-B a = new B();
-
-int[] c=new int[10];
-
-
-class A{
-  public int x; 
-}
-
-class B{
-  public A x; 
-}
-
-B a = new B();
-
-
-string d = c[0] + a.x.x ;
-
+int[] f=new int[10];
