@@ -1,12 +1,8 @@
-class C{}
 
-class B extends C{
-  
-
+class A {
+  public int x;
 }
 
-class A extends B{
-}
+A a = new A();
 
-C a= new B();
-
+int f=a.x;
