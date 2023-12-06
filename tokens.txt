@@ -1,11 +1,21 @@
 int c = 10;
 
+int c = 10;
+abstract class C{
+
+}
 class B extends C{
   public int x;
-  static int f;
-  override void abd(){
+  virtual int fn(int x){
+
+  }
+  
+
+}
+class A extends B{
+  overide int fn(int a){
 
   }
 }
-
+int[] f=new int[10];
 int[] f=new int[10];
