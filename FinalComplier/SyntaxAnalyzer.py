@@ -204,7 +204,7 @@ class SyntaxPhase:
     ############################################ #BODY#########################
     def body(self):
         if self.tokens[self.index][1] == "{":
-            
+            self.semantic.appendScope()            
             self.index += 1
             
             if self.MST():
@@ -713,7 +713,7 @@ class SyntaxPhase:
                     if self.param1():
                         return True
         elif self.tokens[self.index][1] == ")":
-            self.P = self.T
+            self.P = self.T+" --> - "
             return True
         return False
 
@@ -2135,7 +2135,7 @@ class SyntaxPhase:
         if (self.ReferenceAccess()):
             return True
         if (self.tokens[self.index][1] == "("):
-            # self._functionCall_["N"] = self.getPreviousToken()
+            self._functionCall_["N"] = self.getPreviousToken()
             self.advance()
             if (self.Params()):
                 if (self.tokens[self.index][1] == ")"):
