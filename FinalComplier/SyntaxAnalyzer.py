@@ -776,7 +776,7 @@ class SyntaxPhase:
                         
                         self.index += 1
                         
-                        self.semantic.insertMT(self.cName,self.T,self.Am,self.cTm,self.refDt[0]["name"])####NEW SEMANTIC########if not self.semantic_class.insert_DT(self.cName,self.P,self.cTm,self.Am,self.refDt):
+                        self.semantic.insertMT(self.cName,self.P,self.Am,self.cTm,self.refDt[0]["name"])####NEW SEMANTIC########if not self.semantic_class.insert_DT(self.cName,self.P,self.cTm,self.Am,self.refDt):
                                 
                         #         print("Function Reclaration")
                         
@@ -1505,7 +1505,7 @@ class SyntaxPhase:
             self.index += 1
             if self.param():
                 if self.tokens[self.index][0] == ")":
-                    self.semantic.insertMT(self.cName,self.T,self.Am,self.cTm,self.refDt[0]["name"])####NEW SEMANTIC########if not self.semantic_class.insert_DT(self.cName,self.P,self.cTm,self.Am,self.refDt):
+                    self.semantic.insertMT(self.cName,self.P,self.Am,self.cTm,self.refDt[0]["name"])####NEW SEMANTIC########if not self.semantic_class.insert_DT(self.cName,self.P,self.cTm,self.Am,self.refDt):
                        
                     #     print("Function Declaration")
                     self.Dtempty()
