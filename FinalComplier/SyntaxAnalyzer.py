@@ -1248,6 +1248,7 @@ class SyntaxPhase:
             self.index += 1
             return True
         elif self.tokens[self.index][0] == "class":
+            self.Cat=None
             self.T=self.tokens[self.index][1]
             return True
         else:
