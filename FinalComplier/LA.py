@@ -693,7 +693,7 @@ if __name__ == '__main__':
         for token_name, token, start_line_num in tokens:
                print(f"({token_name}, {token} , {start_line_num})\n")
 syntax_phase = SyntaxPhase(tokens)
-some_link = syntax_phase.semantic_class.create_DT()
+some_link = syntax_phase.semantic.create_DT()
 syntax_phase.run()
 
     

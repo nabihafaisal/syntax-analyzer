@@ -1,4 +1,4 @@
-from Semantic import SemanticClass
+# from Semantic import SemanticClass
 from New_Semantic import Semantic
 from prettytable import PrettyTable
 
@@ -24,7 +24,7 @@ class SyntaxPhase:
         self.T1 = "null"
         self.T3 = "null"
         self.T2 = "null"
-        self.semantic_class = SemanticClass()
+        # self.semantic_class = SemanticClass()
         self.semantic = Semantic()
         self.tokens = tokens
         self.index = 0
@@ -44,9 +44,9 @@ class SyntaxPhase:
         if(len(self._exp_)>0):
             if(self._exp_[-1]["T"] != ""):
                 if(self._evaluatedType_ == None):
-                    var = self.semantic_class.Compare(self._exp_[-1]["T"],self.Class,self._exp_[-1]["OP"])
+                    var = self.semantic.Compare(self._exp_[-1]["T"],self.Class,self._exp_[-1]["OP"])
                 else:
-                    var = self.semantic_class.Compare(self._exp_[-1]["T"],self._evaluatedType_,self._exp_[-1]["OP"])
+                    var = self.semantic.Compare(self._exp_[-1]["T"],self._evaluatedType_,self._exp_[-1]["OP"])
                 self._exp_[-1]["T"] = var["T"]
                 self._evaluatedType_ = None
             else:
@@ -68,12 +68,12 @@ class SyntaxPhase:
                     print("No Syntax Error  :)")
                  
                     
-                    print(self.semantic_class.table,"\n")
-                    print(self.semantic_class.Btable,"\n")
+                    # print(self.semantic_class.table,"\n")
+                    # print(self.semantic_class.Btable,"\n")
 
                    
                
-                    print(self.semantic_class.Ftable,"\n")
+                    # print(self.semantic_class.Ftable,"\n")
                   
                     
                 else:
@@ -1211,8 +1211,8 @@ class SyntaxPhase:
                     self.N=self.tokens[self.index][1]
                     self.index += 1
                     if self.inherit():
-                        self.refDt=self.semantic_class.create_DT()
-                        self.semantic_class.add_default_constructor(self.N,self.refDt)
+                        self.refDt=self.semantic.create_DT()
+                        self.semantic.add_default_constructor(self.N,self.refDt)
                         
                         self.semantic.insertDT(self.N,self.T,self.Cat,self.Prnt,self.Am)####NEW SEMANTIC########self.semantic_class.insert_MT(self.N,self.T,self.Am,self.Cat,self.Prnt,self.refDt)
                         if self.tokens[self.index][0] == "{":
@@ -1228,8 +1228,8 @@ class SyntaxPhase:
                     self.N=self.tokens[self.index][1]
                     self.index += 1
                     if self.inherit():
-                        # self.refDt=self.semantic_class.create_DT()
-                        # self.semantic_class.add_default_constructor(self.N,self.refDt)
+                        self.refDt=self.semantic.create_DT()
+                        self.semantic.add_default_constructor(self.N,self.refDt)
                         self.semantic.insertDT(self.N,self.T,self.Cat,self.Prnt,self.Am)####NEW SEMANTIC########self.semantic_class.insert_MT(self.N,self.T,self.Am,self.Cat,self.Prnt,self.refDt)
                        
                         if self.tokens[self.index][1] == "{":

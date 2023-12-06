@@ -51,7 +51,7 @@ class Semantic:
             if N == i["Name"] and i["Scope"] == self.scopeStack[-1]:
                 raise NameError(f"{N} already defined")
         self.definitionTable.append({"Name":N,"Type":T,"Scope":self.scopeStack[-1],"Parent":P,"AM":AM,"CM":CM})
-        if(T=="Class"):
+        if(T=="class"):
             self.insertDefaultConstructorInST(N)
         self.memberTables[N] = []
 
@@ -101,19 +101,22 @@ class Semantic:
 
 ########################### COMPARSION #########################################
     def Compare(self,T1,T2,OP):
-        T1 = self.formatType(T1)
-        T2 = self.formatType(T2)
+        #REMOVE IT LATER
+        if(T1=='null'):
+            return  {"T":T1}
         print("compared")
         if(OP in ["+", "-", "/", "%", "*","^", "&&", "||"]):
-            if(T1 == T2 and (T1 == "str" or T1[len(T1)-2:] == "[]") and OP == "+"):
+            if(T1 == T2 and (T1 == "string") and OP == "+"):
                 return {"T":T1}
-            elif(T1 == T2 and T1 == "num"):
+            if(T1 == T2 and (T1 == "int" or T1 == 'float')):
                 return {"T":T1}
+            elif((T1 == "float" and T2 == "int") or (T2 == "float" and T1 == "int")):
+                return {"T":"float"}
             else:
-                raise TypeError(f"Type Mismatched {T1} and {T2}\nOperator '{OP}' cannot be applied to {T1} and {T2}")
+                raise TypeError(f"Type Mismatched {T1} and {T2}")
         if(OP in ["<", ">", "!", ">=", "<=", "==", "!="]):
             if(T1 == T2 ):
-                return {"T":"Bool"}
+                return {"T":"bool"}
             else:
                 raise TypeError(f"Type Mismatched {T1} and {T2}")
 ########################### COMPARSION #########################################
@@ -185,4 +188,22 @@ class Semantic:
             print(i)
             for j in self.memberTables[i]:
                 print(j)
-        
+
+######################### USELESS FUNCTIONS ############################################
+
+    
+    def create_DT(self):
+       
+      
+       return []
+    
+    def add_default_constructor(self,name,link):
+        default_constructor = {
+            'name': name,
+            'type': 'void',
+            'type_modifier': None,
+            'access_modifier': 'public',
+            
+        }
+        link.append(default_constructor)
+######################### USELESS FUNCTIONS ############################################
