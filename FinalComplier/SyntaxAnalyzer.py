@@ -24,6 +24,7 @@ class SyntaxPhase:
         self.T1 = "null"
         self.T3 = "null"
         self.T2 = "null"
+        self.Tarr = "null"
         # self.semantic_class = SemanticClass()
         self.semantic = Semantic()
         self.tokens = tokens
@@ -1193,13 +1194,17 @@ class SyntaxPhase:
         if self.tokens[self.index][0] == "new":
             self.index += 1
             if self.tokens[self.index][0] == "DT":
+                self.Tarr = self.tokens[self.index][1]
                 self.index += 1
                 if self.tokens[self.index][1] == "[":
                     self.index += 1
                     if self.OE():
                         if self.tokens[self.index][1] == "]":
+                            self.Tarr += "[]"
                             self.index += 1
                             if self.iconst():
+                                self._evaluatedType_ = self.Tarr
+                                self.compareLHS_RHS()
                                 return True
         elif self.b():
             return True
@@ -1211,6 +1216,7 @@ class SyntaxPhase:
             if self.OE():
                 if self.tokens[self.index][1] == "]":
                     self.index += 1
+                    self.Tarr += "[]"
                    
                     return True
         elif self.tokens[self.index][1] == ";":
