@@ -128,12 +128,14 @@ class Semantic:
             elif((T1 == "float" and T2 == "int") or (T2 == "float" and T1 == "int")):
                 return {"T":"float"}
             else:
-                raise TypeError(f"Type Mismatched {T1} and {T2}")
+                print(f"Type Mismatched {T1} and {T2}")
+                exit()
         if(OP in ["<", ">", "!", ">=", "<=", "==", "!="]):
             if(T1 == T2 ):
                 return {"T":"bool"}
             else:
-                raise TypeError(f"Type Mismatched {T1} and {T2}")
+                print(f"Type Mismatched {T1} and {T2}")
+                exit()
 ########################### COMPARSION #########################################
 
 ########################### LOOKUP #########################################

@@ -107,12 +107,14 @@ class SemanticClass:
             elif(T1 == T2 and T1 == "num"):
                 return {"T":T1}
             else:
-                raise TypeError(f"Type Mismatched {T1} and {T2}\nOperator '{OP}' cannot be applied to {T1} and {T2}")
+                print (f"Type Mismatched {T1} and {T2}\nOperator '{OP}' cannot be applied to {T1} and {T2}")
+                exit()
         if(OP in ["<", ">", "!", ">=", "<=", "==", "!="]):
             if(T1 == T2 ):
                 return {"T":"Bool"}
             else:
-                raise TypeError(f"Type Mismatched {T1} and {T2}")
+                print(f"Type Mismatched {T1} and {T2}")
+                exit()
 ########################### COMPARSION #########################################
    
     
