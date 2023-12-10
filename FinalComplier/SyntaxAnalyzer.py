@@ -2162,7 +2162,7 @@ class SyntaxPhase:
     
     def FuncVar(self):
         # print("FuncVar")
-        if (self.tokens[self.index][1] in ";,)]ϵ+-" or self.tokens[self.index][1] in [">=", "<=", "==", ">", "<", "!="] or self.tokens[self.index][1] == "||" or self.tokens[self.index][1] == "&&"):
+        if (self.tokens[self.index][1] in ";,)]ϵ+-*/" or self.tokens[self.index][1] in [">=", "<=", "==", ">", "<", "!="] or self.tokens[self.index][1] == "||" or self.tokens[self.index][1] == "&&"):
             var = self.semantic.LookUpST(self.getPreviousToken(),"")
             self._evaluatedType_ = var["Type"]
             self.compare()
