@@ -1,15 +1,4 @@
-<<<<<<< Updated upstream
-class A{
-  public int fn(int x){
-      this.x=x+2;
 
-  }
-  public int fn(int y,int z){
-
-  }
-  public static int x;
-
-=======
 abstract class A{
   abstract void b();
   int s;
@@ -24,19 +13,9 @@ class B extends A {
 
   }
   
->>>>>>> Stashed changes
+
 }
 class C extends B{
   public override void abd(){
-
-<<<<<<< Updated upstream
-c mn=new c();
-
-
-A x = new A();
-int y = x.fn(5);
-=======
   }
-
 }
->>>>>>> Stashed changes
