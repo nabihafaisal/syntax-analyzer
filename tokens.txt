@@ -1,14 +1,5 @@
 
-float x= 3;
-
-
-abstract class A{
-  abstract void b();
-  int s;
-  
-
-}
-class B extends A {
+class B  {
   public void b(){
 
   }
@@ -19,6 +10,6 @@ class B extends A {
 
 }
 class C extends B{
-  public override void abd(){
+  public override int abd(){
   }
 }
