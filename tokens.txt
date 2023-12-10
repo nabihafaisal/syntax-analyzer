@@ -1,15 +1,8 @@
 
-class B  {
-  public void b(){
+float x=3.0;
+int c=4;
+if(x>c*4-){
 
-  }
- public void abd(){
+}else{
 
-  }
-  
-
-}
-class C extends B{
-  public override int abd(){
-  }
 }
