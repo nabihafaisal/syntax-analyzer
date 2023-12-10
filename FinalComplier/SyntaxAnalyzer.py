@@ -1194,8 +1194,8 @@ class SyntaxPhase:
             if self.OE():
                 if self.tokens[self.index][1] == "]":
                     self.index += 1
-                    if self.iconst():
-                        return True
+                   
+                    return True
         elif self.tokens[self.index][1] == ";":
             return True
         return False
