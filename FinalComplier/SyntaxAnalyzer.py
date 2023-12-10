@@ -829,6 +829,7 @@ class SyntaxPhase:
                 if self.param():
                     if self.tokens[self.index][1] == ")":
                         self.semantic.popScope()
+                        self.semantic.lessScope() #ONLY FOR FUNCTIONS
                         
                         self.index += 1
                         if(self.cTm == "override"):
