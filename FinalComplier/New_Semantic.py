@@ -103,9 +103,15 @@ class Semantic:
 
     def insertMT(self,N,T,AM,TM,R):
         for i in self.memberTables[R]:
-            if(i["Name"]==N):
-                print(f"{N} is already declared in {R}")
-                exit()
+            if('-->' not in i["Type"] and '-->' not in T):
+                if(i["Name"]==N):
+                    print(f"{N} is already declared in {R}")
+                    exit()
+            else:
+                if(i["Name"]==N and i["Type"].split("-->")[1].strip()==T.split("-->")[1].strip()):
+                    print(f"{N} is already declared in {R}")
+                    exit()
+                pass
         self.memberTables[R].append({"Name":N,"Type":T,"AM":AM,"TM":TM})
 
     def insertVarDTInMT(self,T,R):
@@ -173,14 +179,15 @@ class Semantic:
     def LookUpFunctionMT(self,Ref,N,T):
         try:
             for i in self.memberTables[Ref]:
-                if(i["Name"] == N and i["AM"] == "public" and T in i["Type"]):
-                    i["T"] = i["Type"].split("-->")[0].strip()
-                    return i
+                if("->-" in i["Type"]):
+                    if(i["Name"] == N and i["AM"] == "public" and i["Type"].split("-->")[1].strip() == T):
+                        j = {**i,"T":i["Type"].split("-->")[0].strip()}
+                        return j
             for i in self.getEntryFromDT(Ref)["Parent"].split("-"):
                 return self.LookUpFunctionMT(i,N,T)
         except:
             pass
-        print(f"Method {N}() does not exists on type {Ref}") 
+        print(f"Method {N}({''if T == '-' else T}) does not exists on type {Ref}") 
         exit()
 ########################### LOOKUP #########################################
 

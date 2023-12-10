@@ -2,5 +2,5 @@ class A{
   public int fn(int x){
 
   }
-  public int fn(int z,int y)
+  public int fn(int z,int y){}
 }
