@@ -290,8 +290,10 @@ class SyntaxPhase:
                 var=self.semantic.getEntryFromDT(self.N)
                 if var is None:
                     print("Undeclared "+self.N)
+                    exit()
                 elif(var["Name"] == "null"):
                     print("Undeclared "+self.N)
+                    exit()
                 else:
                     self.Prnt=self.N
                     self.T=var["Name"]
