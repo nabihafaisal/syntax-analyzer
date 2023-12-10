@@ -168,6 +168,7 @@ class SyntaxPhase:
           
         elif self.tokens[self.index][1] in [";", ","]:
            
+           
             
            
             return True
@@ -198,6 +199,7 @@ class SyntaxPhase:
           
             if(self.tokens[self.index][0] == "ID"):
                 self.N=self.tokens[self.index][1]
+                self.semantic.insertST(self.N,self.T)
                 self.index += 1
 
             if self.dec2():
@@ -347,17 +349,17 @@ class SyntaxPhase:
     def SST2(self):
         if self.tokens[self.index][0] == "ID":
             self.N=self.tokens[self.index][1]
-            # if(self.N!=None and self.T!=None):
-            #     self.semantic_class.insert_FT(self.N,self.T)
-            #     self.N=None
+            if(self.N!=None and self.T!=None):
+                self.semantic.insertST(self.N,self.T)
+                self.N=None
            
             
             self.index += 1
            
             if self.dec2():
-                if(self.N!=None and self.T!=None):
-                    self.semantic.insertST(self.N,self.T)####NEW SEMANTIC########self.semantic_class.insert_FT(self.N,self.T)
-                    self.N=None
+                # if(self.N!=None and self.T!=None):
+                #     self.semantic.insertST(self.N,self.T)####NEW SEMANTIC########self.semantic_class.insert_FT(self.N,self.T)
+                #     self.N=None
                 
 
               
@@ -542,24 +544,60 @@ class SyntaxPhase:
     
 
      ################################################## OBJECT DECLARATION ####################################
+    # def obj_dec(self):
+    #     if (
+    #         self.tokens[self.index][0] == "ID" and
+    #         self.tokens[self.index + 1][0] == "ID" and
+    #         self.tokens[self.index + 2][1] == "=" and
+    #         self.tokens[self.index + 3][0] == "new" and
+    #         self.tokens[self.index + 4][0] == "ID"
+    #     ):
+    #         self.index += 5
+    #         if self.tokens[self.index][1] == "(":
+    #             self.index += 1
+    #             if self.arg():
+    #                 if self.tokens[self.index][1] == ")":
+    #                     self.index += 1
+    #                     if self.tokens[self.index][1] == ";":
+    #                         self.index += 1
+    #                         return True
+    #     return False
     def obj_dec(self):
         if (
-            self.tokens[self.index][0] == "ID" and
-            self.tokens[self.index + 1][0] == "ID" and
-            self.tokens[self.index + 2][1] == "=" and
-            self.tokens[self.index + 3][0] == "new" and
-            self.tokens[self.index + 4][0] == "ID"
-        ):
-            self.index += 5
+            self.tokens[self.index][0] == "ID"):
+                self.T=self.tokens[self.index][1]
+                self.index += 1
+               
+
+                # if not self.semantic.looku(self.T):
+                #     print("class does not exist")
+                #     exit()
+        elif( self.tokens[self.index][0] == "ID"): 
+            self.N=self.tokens[self.index][1]
+            self.index += 1
+            
+            self.semantic.insertST(self.N,self.T)
+               
+        elif(self.tokens[self.index][1] == "="):
+               self.index+=1
+        elif(self.tokens[self.index][0] == "new"):
+             self.index+=1
+            
+        elif(self.tokens[self.index][0] == "ID"):
+            self.index+=1
+            self.N=self.tokens[self.index][1]
+            
             if self.tokens[self.index][1] == "(":
                 self.index += 1
                 if self.arg():
                     if self.tokens[self.index][1] == ")":
                         self.index += 1
+                        # self.sematic.LookUpFunctionMT(self.N,self.T)
                         if self.tokens[self.index][1] == ";":
                             self.index += 1
                             return True
         return False
+    
     
      ######################################################## ASSIGNMENT###############################
 
@@ -1334,6 +1372,7 @@ class SyntaxPhase:
             if self.A7():
                 return True
         elif self.tokens[self.index][1] == "virtual" :
+            self.cTm=self.tokens[self.index][1]
             self.index += 1
             if self.A18():
                 return True
@@ -1355,6 +1394,7 @@ class SyntaxPhase:
     def A19(self):
         if self.tokens[self.index][0] == "void":
             self.T=self.tokens[self.index][1]
+           
             self.index += 1
             if self.A5():
                 return True
@@ -1373,6 +1413,7 @@ class SyntaxPhase:
 
     def A5(self):
         if self.tokens[self.index][0] == "main":
+            self.cName=self.tokens[self.index][1]
             self.index += 1
             if self.A6():
                 return True
@@ -1394,6 +1435,7 @@ class SyntaxPhase:
     def A7(self):
         if (self.tokens[self.index][1] == "virtual" or
         self.tokens[self.index][1] == "override"):
+            self.cTm=self.tokens[self.index][1]
             self.index += 1
             if self.A18():
                 return True
@@ -1441,6 +1483,7 @@ class SyntaxPhase:
             if self.A10():
                 return True
         elif self.tokens[self.index][0] == "ID":
+            self.N=self.tokens[self.index][1]
             self.index += 1
             if self.A14():
                 return True
@@ -1457,6 +1500,7 @@ class SyntaxPhase:
                     if self.A11():
                         return True
         elif self.tokens[self.index][0] == "ID":
+            self.cName=self.tokens[self.index][1]
             self.index += 1
             if self.A16():
                 return True
@@ -1551,6 +1595,7 @@ class SyntaxPhase:
             if self.tokens[self.index][0] == "new":
                 self.index += 1
                 if self.tokens[self.index][0] == "ID":
+                    self.N=self.tokens[self.index][1]
                     self.index += 1
                     if self.tokens[self.index][0] == "(":
                         self.index += 1
@@ -1579,6 +1624,7 @@ class SyntaxPhase:
             if self.A20():
                 return True
         elif self.tokens[self.index][0] == "ID":
+            self.cName=self.tokens[self.index][1]
             self.index += 1
             if self.A21():
                 return True
@@ -1704,6 +1750,7 @@ class SyntaxPhase:
 
     def B5(self):
         if self.tokens[self.index][0] == "main":
+            self.cName=self.tokens[self.index][1]
             self.index += 1
             if self.B6():
                 return True
@@ -1867,6 +1914,7 @@ class SyntaxPhase:
             if self.B16():
                 return True
         elif self.tokens[self.index][0] == "ID":
+            self.cName=self.tokens[self.index][1]
             self.index += 1
             if self.B17():
                 return True
