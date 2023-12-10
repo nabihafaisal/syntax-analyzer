@@ -3,15 +3,12 @@ class B  {
   public void b(){
 
   }
- public void abd(){
-
-  }
-  public virtual int abd(){
+  public int abd(){
   }
   
 
 }
-class C extends B{
-  public override int abd(){
+class C {
+  public int abd(){
   }
 }
