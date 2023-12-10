@@ -287,11 +287,14 @@ class SyntaxPhase:
                     return True
             elif self.tokens[self.index][0] == "ID":
                 self.N=self.tokens[self.index][1]
-                self.T=self.semantic.getEntryFromDT(self.N)["Name"]
-                if self.T=="null":
+                var=self.semantic.getEntryFromDT(self.N)
+                if var is None:
+                    print("Undeclared "+self.N)
+                elif(var["Name"] == "null"):
                     print("Undeclared "+self.N)
                 else:
                     self.Prnt=self.N
+                    self.T=var["Name"]
                 self.index += 1
                 if self.SST1():
                     return True
