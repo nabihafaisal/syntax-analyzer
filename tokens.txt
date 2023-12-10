@@ -1,8 +1,17 @@
 
-float x=3.0;
-int c=4;
-if(x>c*4-){
+class B  {
+  public void b(){
 
-}else{
+  }
+ public void abd(){
 
+  }
+  public virtual int abd(){
+  }
+  
+
+}
+class C extends B{
+  public override int abd(){
+  }
 }

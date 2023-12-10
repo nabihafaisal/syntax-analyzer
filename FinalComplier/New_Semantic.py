@@ -21,10 +21,13 @@ class Semantic:
         self.scopeStack.append(self.currentScopeId)
 
     def popScope(self):
+        self.lessScope()
         self.scopeStack.pop()
 
     def advanceScope(self):
         self.currentScopeId += 1
+    def lessScope(self):
+        self.currentScopeId -=1
 
     def insertST(self,N,T):
         for i in self.scopeTable:
