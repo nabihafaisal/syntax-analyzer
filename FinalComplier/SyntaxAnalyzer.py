@@ -1097,13 +1097,13 @@ class SyntaxPhase:
         return True
 
     def T_prime(self):
-        if self.tokens[self.index][0] == 'MDM':
+        if self.tokens[self.index][0] in ('MDM'):
             self.opr=self.tokens[self.index][1]
             self.index += 1
             ##########################TYPE CHECKING#############################
             self._exp_[-1]["OP"] = self.opr
             ##########################TYPE CHECKING#############################
-            self.T2=self.semantic_class.Compare(self.T,self.T1,self.opr)
+            self.T2=self.semantic.Compare(self.T,self.T1,self.opr)
             if not self.F():
                 return False
             if not self.T_prime():
