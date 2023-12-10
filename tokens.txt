@@ -1,4 +1,7 @@
 
+float x= 3;
+
+
 abstract class A{
   abstract void b();
   int s;
