@@ -54,9 +54,9 @@ class Semantic:
                 print(f"{N} already defined")
                 exit()
         self.definitionTable.append({"Name":N,"Type":T,"Scope":self.scopeStack[-1],"Parent":P,"AM":AM,"CM":CM})
-        if(T=="class"):
-            self.insertDefaultConstructorInST(N)
         self.memberTables[N] = []
+        if(T=="class"):
+            self.insertDefaultConstructorInMT(N)
 
     def checkObjectAssignment(self,N,T):
         if(len(self.definitionTable) == 0):
@@ -89,8 +89,8 @@ class Semantic:
         print(f"{N}: No such class in current scope")
         exit()
 
-    def insertDefaultConstructorInST(self,N):
-        self.insertST(N,N+" --> -")
+    def insertDefaultConstructorInMT(self,N):
+        self.insertMT(N,N+" --> -",'public',None,N)
 
     def getEntryFromDT(self,N):
         for i in self.definitionTable:
