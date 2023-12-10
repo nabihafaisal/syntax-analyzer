@@ -39,6 +39,9 @@ class SyntaxPhase:
         self._evaluatedType_ = None
         #########################################TYPECHECKING################################################       
 
+    def formatType(self,n):
+        return n
+
     def compare(self):
         # try:
         if(len(self._exp_)>0):
@@ -2162,8 +2165,12 @@ class SyntaxPhase:
             if (self.FunctionCall()):
                 return True
         if (self.tokens[self.index][1] in ".["):
-            var = self.semantic.LookUpST(self.getPreviousToken(),"")
-            self._evaluatedType_ = var["Type"]
+            var = self.semantic.getEntryFromDT(self.getPreviousToken())
+            if(var is not None):
+                self._evaluatedType_ = self.getPreviousToken()
+            else:
+                var = self.semantic.LookUpST(self.getPreviousToken(),"")
+                self._evaluatedType_ = var["Type"]
             # self.compare()
             if (self.ReferenceAccess()):
                 return True

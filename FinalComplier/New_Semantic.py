@@ -179,7 +179,7 @@ class Semantic:
     def LookUpFunctionMT(self,Ref,N,T):
         try:
             for i in self.memberTables[Ref]:
-                if("->-" in i["Type"]):
+                if("-->" in i["Type"]):
                     if(i["Name"] == N and i["AM"] == "public" and i["Type"].split("-->")[1].strip() == T):
                         j = {**i,"T":i["Type"].split("-->")[0].strip()}
                         return j
