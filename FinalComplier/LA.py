@@ -441,8 +441,9 @@ class Tokenizer:
                     return tokens
 
                 token, token_name = t.get_next_token()
+                if (token_name!="COMMENT"):
             
-                tokens.append((token_name, token,t.start_line_num))
+                    tokens.append((token_name, token,t.start_line_num))
             except LexicalError as e:
                 print(f'Lexical error: {e} - Line: {t.start_line_num} - Column: {t.start_col_num}')
                 t.token_buffer = ''
