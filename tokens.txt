@@ -1,8 +1,5 @@
 
-class A {
-  public int x;
+abstract class A{
+  abstract void m();
+  int b=0;
 }
-
-A a = new A();
-
-int f=a.x;

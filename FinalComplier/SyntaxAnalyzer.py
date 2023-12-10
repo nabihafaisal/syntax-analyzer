@@ -710,6 +710,7 @@ class SyntaxPhase:
                             if self.tokens[self.index][1] == ")":
                                 self.semantic.insertMT(self.N,self.T,self.Am,self.cTm,self.refDt[0]["name"])####NEW SEMANTIC########self.semantic_class.insert_DT(self.N,self.T,self.Am,self.cTm,self.refDt)
                                 self.index += 1
+                                self.Dtempty()
                                 if self.tokens[self.index][1] == ";":
                                     self.index += 1
                                     return True
