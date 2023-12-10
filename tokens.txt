@@ -3,7 +3,7 @@ class B  {
   public void b(){
 
   }
-  public int abd(){
+  public int abd(int a){
   }
   
 
@@ -12,3 +12,4 @@ class C {
   public int abd(){
   }
 }
+string []A=new int [5];
