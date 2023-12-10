@@ -28,13 +28,15 @@ class Semantic:
     def insertST(self,N,T):
         for i in self.scopeTable:
             if N == i["Name"] and i["Scope"] == self.scopeStack[-1]:
-                raise NameError(f"{N} already defined")
+                print(f"{N} already defined")
+                exit()
         self.scopeTable.append({"Name":N,"Type":T,"Scope":self.scopeStack[-1]})        
 
     def insertFunctionST(self,N,T):
         for i in self.scopeTable:
             if N == i["Name"] and i["Scope"] == self.scopeStack[-2]:
-                raise NameError(f"{N} already defined")
+                print(f"{N} already defined")
+                exit()
         self.scopeTable.append({"Name":N,"Type":T,"Scope":self.scopeStack[-2]})
 
     
@@ -49,7 +51,8 @@ class Semantic:
     def insertDT(self,N,T,CM,P,AM):
         for i in self.definitionTable:
             if N == i["Name"] and i["Scope"] == self.scopeStack[-1]:
-                raise NameError(f"{N} already defined")
+                print(f"{N} already defined")
+                exit()
         self.definitionTable.append({"Name":N,"Type":T,"Scope":self.scopeStack[-1],"Parent":P,"AM":AM,"CM":CM})
         if(T=="class"):
             self.insertDefaultConstructorInST(N)
@@ -57,7 +60,8 @@ class Semantic:
 
     def checkObjectAssignment(self,N,T):
         if(len(self.definitionTable) == 0):
-            raise NameError(f"{N}: No such class in current scope")
+            print(f"{N}: No such class in current scope")
+            exit()
         var = self.getEntryFromDT(N)
         if(N==T):
             if((var["Name"] == N or var["Parent"] == T )and var["CM"] != "abstract"):
@@ -69,17 +73,21 @@ class Semantic:
         #         if(i["Type"] != "class"):
         #             raise NameError(f"\n{N}: Invalid parent")
         #         return
-        raise NameError(f"{N}: Invalid type casting")
+        print(f"{N}: Invalid type casting")
+        exit()
 
     def checkParentClass(self,N):
         if(len(self.definitionTable) == 0):
-            raise NameError(f"{N}: No such class in current scope")
+            print(f"{N}: No such class in current scope")
+            exit()
         for i in self.definitionTable:
             if N == i["Name"] and i["Scope"] in self.scopeStack:
                 if(i["CM"] == "sealed"):
-                    raise TypeError(f"\n{N}: Cannot Inherit Sealed class")
+                    print(f"\n{N}: Cannot Inherit Sealed class")
+                    exit()
                 return
-        raise NameError(f"{N}: No such class in current scope")
+        print(f"{N}: No such class in current scope")
+        exit()
 
     def insertDefaultConstructorInST(self,N):
         self.insertST(N,N+" --> -")
@@ -96,7 +104,8 @@ class Semantic:
     def insertMT(self,N,T,AM,TM,R):
         for i in self.memberTables[R]:
             if(i["Name"]==N):
-                raise NameError(f"{N} is already declared in {R}")
+                print(f"{N} is already declared in {R}")
+                exit()
         self.memberTables[R].append({"Name":N,"Type":T,"AM":AM,"TM":TM})
 
     def insertVarDTInMT(self,T,R):
@@ -140,7 +149,8 @@ class Semantic:
                     if(j["Name"] == N and j["Scope"] == i):
                         if(T == ""):
                             return j
-        raise LookupError(f"{N} does not exists") 
+        print(f"{N} does not exists") 
+        exit()
     
     def LookUpVarMT(self,Ref,N):
         # print('lookup')
@@ -155,7 +165,8 @@ class Semantic:
                 #         return j
         except:
             pass
-        raise LookupError(f"Property or method {N} does not exists on type {Ref}") 
+        print(f"Property or method {N} does not exists on type {Ref}") 
+        exit()
     
     def LookUpFunctionMT(self,Ref,N,T):
         try:
@@ -167,7 +178,8 @@ class Semantic:
                 return self.LookUpFunctionMT(i,N,T)
         except:
             pass
-        raise LookupError(f"Method {N}() does not exists on type {Ref}") 
+        print(f"Method {N}() does not exists on type {Ref}") 
+        exit()
 ########################### LOOKUP #########################################
 
     def checkDT(self,DT):
