@@ -61,7 +61,8 @@ class SyntaxPhase:
         if self.T == 'float' and self._evaluatedType_ == 'int':
             return
         if(self.T != self._evaluatedType_ and (self.T != "" and self._evaluatedType_ != "" and self.T and self._evaluatedType_)):
-            raise TypeError(f"Cannot assign {self._evaluatedType_} to type {self.T}")
+            print(f"Cannot assign {self._evaluatedType_} to type {self.T}")
+            exit()
 
     def Dtempty(self):
         self.cName = None
@@ -836,7 +837,8 @@ class SyntaxPhase:
                         if(self.cTm == "override"):
                             var = self.semantic.LookUpFunctionMT(self.Prnt,self.cName,self.P.split("-->")[1].strip())
                             if(var["TM"] != 'virtual'):
-                                raise TypeError(f"No virtual function {self.cName} in class {self.Prnt}")
+                                print(f"No virtual function {self.cName} in class {self.Prnt}")
+                                exit()
                                     
                         self.semantic.insertMT(self.cName,self.P,self.Am,self.cTm,self.refDt[0]["name"])####NEW SEMANTIC########if not self.semantic_class.insert_DT(self.cName,self.P,self.cTm,self.Am,self.refDt):
                                 
@@ -1583,7 +1585,8 @@ class SyntaxPhase:
                     if(self.cTm == "override"):
                         var = self.semantic.LookUpFunctionMT(self.Prnt,self.cName,self.P.split('-->')[1].strip())
                         if(var["TM"] != 'virtual'):
-                            raise TypeError(f"No virtual function {self.cName} in class {self.Prnt}")
+                            print(f"No virtual function {self.cName} in class {self.Prnt}")
+                            exit()
                     self.semantic.insertMT(self.cName,self.P,self.Am,self.cTm,self.refDt[0]["name"])####NEW SEMANTIC########if not self.semantic_class.insert_DT(self.cName,self.P,self.cTm,self.Am,self.refDt):
                        
                     #     print("Function Declaration")
