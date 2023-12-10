@@ -1,4 +1,5 @@
 # Semantic implementation
+from prettytable import PrettyTable
 class Semantic:
     def __init__(self):
         self.currentScopeId = 0
@@ -58,21 +59,20 @@ class Semantic:
         if(T=="class"):
             self.insertDefaultConstructorInMT(N)
 
-    def checkObjectAssignment(self,N,T):
-        if(len(self.definitionTable) == 0):
-            print(f"{N}: No such class in current scope")
+    def checkObjectAssignment(self, N, T):
+        if len(self.definitionTable) == 0:
+            print(f"{N}: No such class in the current scope")
             exit()
+
         var = self.getEntryFromDT(N)
-        if(N==T):
-            if((var["Name"] == N or var["Parent"] == T )and var["CM"] != "abstract"):
-                return var
-        elif(var["Parent"] != None):
-            return self.checkObjectAssignment(var["Parent"],T)
-        # for i in self.definitionTable:
-        #     if N == i["Name"] and i["Scope"] in self.scopeStack:
-        #         if(i["Type"] != "class"):
-        #             raise NameError(f"\n{N}: Invalid parent")
-        #         return
+
+        if var is not None:
+            if N == T:
+                if (var["Name"] == N or var["Parent"] == T) and var["CM"] != "abstract":
+                    return var
+            elif var["Parent"] is not None:
+                return self.checkObjectAssignment(var["Parent"], T)
+
         print(f"{N}: Invalid type casting")
         exit()
 
@@ -200,21 +200,21 @@ class Semantic:
                     return True
         return False
 
-    def print(self):
-        # return
-        print("\nSCOPE TABLE")
-        for i in self.scopeTable:
-            print(i)
+    # def print(self):
+    #     # return
+    #     print("\nSCOPE TABLE")
+    #     for i in self.scopeTable:
+    #         print(i)
             
-        print("\nDEFINITION TABLE")
-        for i in self.definitionTable:
-            print(i)
+    #     print("\nDEFINITION TABLE")
+    #     for i in self.definitionTable:
+    #         print(i)
         
-        print("\nMEMBER TABLE")
-        for i in self.memberTables:
-            print(i)
-            for j in self.memberTables[i]:
-                print(j)
+    #     print("\nMEMBER TABLE")
+    #     for i in self.memberTables:
+    #         print(i)
+    #         for j in self.memberTables[i]:
+    #             print(j)
 
 ######################### USELESS FUNCTIONS ############################################
 
@@ -234,3 +234,26 @@ class Semantic:
         }
         link.append(default_constructor)
 ######################### USELESS FUNCTIONS ############################################
+    def print(self):
+        # SCOPE TABLE
+        print("\nSCOPE TABLE")
+        scope_table = PrettyTable(["Name", "Type", "Scope"])
+        for i in self.scopeTable:
+            scope_table.add_row([i["Name"], i["Type"], i["Scope"]])
+        print(scope_table)
+
+        # DEFINITION TABLE
+        print("\nDEFINITION TABLE")
+        definition_table = PrettyTable(["Name", "Type", "Scope", "Parent", "AM", "CM"])
+        for i in self.definitionTable:
+            definition_table.add_row([i["Name"], i["Type"], i["Scope"], i["Parent"], i["AM"], i["CM"]])
+        print(definition_table)
+
+        # MEMBER TABLE
+        print("\nMEMBER TABLE")
+        for class_name, member_table in self.memberTables.items():
+            class_table = PrettyTable(["Name", "Type", "AM", "TM"])
+            for member in member_table:
+                class_table.add_row([member["Name"], member["Type"], member["AM"], member["TM"]])
+            print(f"\n{class_name}")
+            print(class_table)
