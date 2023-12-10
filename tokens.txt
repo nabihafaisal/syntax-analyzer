@@ -1,9 +1,16 @@
 class A{
   public int fn(int x){
+      this.x=x+2;
+
+  }
+  public int fn(int y,int z){
 
   }
   public static int x;
+
 }
+
+c mn=new c();
 
 
 A x = new A();
