@@ -1034,12 +1034,18 @@ class SyntaxPhase:
     def OE_prime(self):
         if self.tokens[self.index][0] == 'or':
             self.opr=self.tokens[self.index][0]
+            ##########################TYPE CHECKING#############################
+            self._exp_[-1]["OP"] = self.opr
+            self._exp_.append({"T":"","T1":"","T2":"","OP":""})
+            ##########################TYPE CHECKING#############################
            
             self.index += 1
             if not self.AE():
                 return False
             if not self.OE_prime():
                 return False
+            self._evaluatedType_ = self.formatType(self._exp_.pop()["T"])
+            self.compare()
         # handle epsilon
         return True
 
@@ -1054,11 +1060,18 @@ class SyntaxPhase:
         if self.tokens[self.index][0] == 'and':
             self.opr=self.tokens[self.index][0]
             
+            ##########################TYPE CHECKING#############################
+            self._exp_[-1]["OP"] = self.opr
+            self._exp_.append({"T":"","T1":"","T2":"","OP":""})
+            ##########################TYPE CHECKING#############################
+            
             self.index += 1
             if not self.RE():
                 return False
             if not self.AE_prime():
                 return False
+            self._evaluatedType_ = self.formatType(self._exp_.pop()["T"])
+            self.compare()
         # handle epsilon
         return True
 
@@ -1074,6 +1087,7 @@ class SyntaxPhase:
             self.opr=self.tokens[self.index][1]
             ##########################TYPE CHECKING#############################
             self._exp_[-1]["OP"] = self.opr
+            self._exp_.append({"T":"","T1":"","T2":"","OP":""})
             ##########################TYPE CHECKING#############################
    
             self.index += 1
@@ -1081,6 +1095,9 @@ class SyntaxPhase:
                 return False
             if not self.RE_prime():
                 return False
+            self._evaluatedType_ = self.formatType(self._exp_.pop()["T"])
+            self.compare()
+                  
         # handle epsilon
         return True
 

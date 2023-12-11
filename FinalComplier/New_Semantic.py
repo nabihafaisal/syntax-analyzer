@@ -129,10 +129,12 @@ class Semantic:
         if(T1=='null'):
             return  {"T":T1}
         print("compared")
-        if(OP in ["+", "-", "/", "%", "*","^", "&&", "||"]):
+        if(OP in ["+", "-", "/", "%", "*","^", "and", "or"]):
             if(T1 == T2 and (T1 == "string") and OP == "+"):
                 return {"T":T1}
             if(T1 == T2 and (T1 == "int" or T1 == 'float')):
+                return {"T":T1}
+            elif(T1 == T2 and OP in ["or","and"]):
                 return {"T":T1}
             elif((T1 == "float" and T2 == "int") or (T2 == "float" and T1 == "int")):
                 return {"T":"float"}
